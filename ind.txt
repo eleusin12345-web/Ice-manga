@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MangaWeb</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+body {
+background-color: #0f172a;
+color: #f8fafc;
+font-family: system-ui, -apple-system, sans-serif;
+-webkit-tap-highlight-color: transparent;
+}
+
+.manga-card { transition: transform 0.2s; }
+.manga-card:active { transform: scale(0.97); }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #1e293b; }
+::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+
+.modal-backdrop {
+background-color: rgba(0, 0, 0, 0.85);
+backdrop-filter: blur(4px);
+}
+</style>
+</head>
+<body class="antialiased select-none">
+
+<!-- НАВИГАЦИЯ -->
+<nav class="fixed top-0 left-0 right-0 z-40 bg-slate-900 border-b border-slate-800 h-16 flex items-center px-4 justify-between">
+<div id="btn-logo" class="flex items-center gap-2 cursor-pointer active:opacity-80">
+<i class="fa-solid fa-book-open text-purple-500 text-2xl"></i>
+<span class="font-black text-xl tracking-tight">Manga<span class="text-purple-500">Web</span></span>
+</div>
+
+<div class="flex items-center gap-2">
+<!-- КНОПКА СОЗДАТЬ МАНГУ -->
+<button id="btn-open-add-manga" class="bg-purple-600 active:bg-purple-700 text-white font-bold py-2 px-4 rounded-full text-sm flex items-center gap-2 shadow-lg shadow-purple-600/30">
+<i class="fa-solid fa-plus text-base"></i>
+<span class="hidden sm:inline">Новая манга</span>
+</button>
+</div>
+</nav>
+
+<!-- ОСНОВНОЙ КОНТЕНТ -->
+<main class="pt-20 pb-12 px-4 max-w-6xl mx-auto">
+
+<!-- 1. КАТАЛОГ -->
+<section id="sec-catalog">
+<h2 class="text-2xl font-black mb-6 text-slate-100 flex items-center justify-between">
+<span>Каталог</span>
+<span id="manga-counter" class="text-xs font-normal text-slate-400 bg-slate-800 px-3 py-1 rounded-full">0</span>
+</h2>
+<div id="manga-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
+
+<div id="empty-state" class="hidden text-center py-16 text-slate-500">
+<i class="fa-solid fa-ghost text-5xl mb-3"></i>
+<p class="text-base font-medium">Каталог пуст</p>
+<p class="text-xs mt-1 text-slate-600">Нажмите на плюс вверху, чтобы добавить мангу</p>
+</div>
+</section>
+
+<!-- 2. СТРАНИЦА МАНГИ И ГЛАВ -->
+<section id="sec-details" class="hidden">
+<button id="btn-back-to-catalog" class="mb-4 text-slate-400 active:text-white flex items-center gap-2 text-sm bg-slate-800 py-2 px-4 rounded-full w-fit">
+<i class="fa-solid fa-arrow-left"></i> Назад в каталог
+</button>
+
+<div class="bg-slate-800/60 rounded-2xl p-4 sm:p-6 border border-slate-700/60 flex flex-col sm:flex-row gap-6 relative">
+<button id="btn-delete-manga" class="absolute top-4 right-4 text-red-400 hover:text-red-300 p-2 text-lg" title="Удалить мангу">
+<i class="fa-solid fa-trash"></i>
+</button>
+
+<img id="manga-cover-img" src="" class="w-full sm:w-56 h-80 object-cover rounded-xl bg-slate-900 shadow-md" alt="Cover">
+
+<div class="flex-1 flex flex-col">
+<h1 id="manga-title-text" class="text-2xl sm:text-3xl font-black text-white pr-10 mb-2">...</h1>
+<p id="manga-desc-text" class="text-slate-300 text-sm mb-6 leading-relaxed bg-slate-900/40 p-3 rounded-lg border border-slate-800/80">...</p>
+
+<div class="mt-auto">
+<div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-700">
+<h3 class="font-bold text-lg text-white">Список глав</h3>
+
+<!-- КНОПКА ДОБАВИТЬ ГЛАВУ -->
+<button id="btn-open-add-chapter" class="bg-purple-600 active:bg-purple-700 text-white font-bold text-xs py-2 px-3 rounded-lg flex items-center gap-1.5">
+<i class="fa-solid fa-plus"></i> Добавить главу
+</button>
+</div>
+
+<div id="chapters-container" class="flex flex-col gap-2 max-h-60 overflow-y-auto"></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- 3. ЧИТАЛКА -->
+<section id="sec-reader" class="hidden fixed inset-0 z-50 bg-black overflow-y-auto">
+<div class="fixed top-0 left-0 right-0 bg-slate-900/90 backdrop-blur border-b border-slate-800 p-3 flex items-center justify-between z-10">
+<button id="btn-close-reader" class="text-slate-300 p-2 text-lg">
+<i class="fa-solid fa-xmark"></i>
+</button>
+<div class="text-center truncate px-2">
+<div id="reader-manga-name" class="text-xs text-slate-400 truncate">...</div>
+<div id="reader-chapter-name" class="text-sm font-bold text-purple-400 truncate">...</div>
+</div>
+<div class="w-8"></div>
+</div>
+
+<div id="reader-pages-list" class="max-w-3xl mx-auto pt-16 pb-20 flex flex-col items-center"></div>
+
+<div class="max-w-3xl mx-auto px-4 pb-12 flex gap-4">
+<button id="btn-prev-chapter" class="flex-1 bg-slate-800 text-white py-3 rounded-xl font-bold text-sm disabled:opacity-30">
+<i class="fa-solid fa-chevron-left mr-1"></i> Пред. глава
+</button>
+<button id="btn-next-chapter" class="flex-1 bg-purple-600 text-white py-3 rounded-xl font-bold text-sm disabled:opacity-30">
+След. глава <i class="fa-solid fa-chevron-right ml-1"></i>
+</button>
+</div>
+</section>
+
+</main>
+
+<!-- МОДАЛЬНОЕ ОКНО: СОЗДАТЬ МАНГУ -->
+<div id="modal-add-manga" class="hidden fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4">
+<div class="bg-slate-900 border border-slate-700 w-full max-w-md rounded-2xl p-6 shadow-2xl">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-xl font-bold text-white">Новая манга</h3>
+<button id="btn-close-modal-manga" class="text-slate-400 p-1 text-xl"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<form id="form-add-manga" class="space-y-4">
+<div>
+<label class="block text-xs font-bold text-slate-400 uppercase mb-1">Название</label>
+<input type="text" id="in-manga-title" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-purple-500" placeholder="Например: Атака Титанов">
+</div>
+<div>
+<label class="block text-xs font-bold text-slate-400 uppercase mb-1">Ссылка на обложку (URL)</label>
+<input type="url" id="in-manga-cover" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-purple-500" placeholder="https://...">
+</div>
+<div>
+<label class="block text-xs font-bold text-slate-400 uppercase mb-1">Описание</label>
+<textarea id="in-manga-desc" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-purple-500" placeholder="Описание сюжета..."></textarea>
+</div>
+<button type="submit" class="w-full bg-purple-600 active:bg-purple-700 text-white font-bold py-3 rounded-lg shadow-lg">Создать</button>
+</form>
+</div>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО: ДОБАВИТЬ ГЛАВУ -->
+<div id="modal-add-chapter" class="hidden fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4">
+<div class="bg-slate-900 border border-slate-700 w-full max-w-md rounded-2xl p-6 shadow-2xl">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-xl font-bold text-white">Добавить главу</h3>
+<button id="btn-close-modal-chapter" class="text-slate-400 p-1 text-xl"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<form id="form-add-chapter" class="space-y-4">
+<div>
+<label class="block text-xs font-bold text-slate-400 uppercase mb-1">Название/Номер главы</label>
+<input type="text" id="in-chapter-title" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-purple-500" placeholder="Например: Глава 1">
+</div>
+<div>
+<label class="block text-xs font-bold text-slate-400 uppercase mb-1">Ссылки на картинки (каждая с новой строки)</label>
+<textarea id="in-chapter-urls" required rows="6" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-white focus:outline-none focus:border-purple-500 text-xs" placeholder="https://ссылка1.jpg https://ссылка2.jpg"></textarea>
+</div>
+<button type="submit" class="w-full bg-purple-600 active:bg-purple-700 text-white font-bold py-3 rounded-lg shadow-lg">Опубликовать</button>
+</form>
+</div>
+</div>
+
+<script>
+// ИНИЦИАЛИЗАЦИЯ И БЕЗОПАСНОЕ ХРАНИЛИЩЕ
+let mangaList = [];
+let currentMangaId = null;
+let currentChapterIdx = null;
+
+function loadStorageData() {
+try {
+const raw = localStorage.getItem('MW_DATA_V2');
+if (raw) {
+mangaList = JSON.parse(raw);
+} else {
+mangaList = [];
+}
+} catch (e) {
+console.error('Ошибка загрузки данных:', e);
+mangaList = [];
+}
+}
+
+function saveStorageData() {
+try {
+localStorage.setItem('MW_DATA_V2', JSON.stringify(mangaList));
+} catch (e) {
+alert('Не удалось сохранить: возможно превышен лимит памяти.');
+}
+}
+
+// НАВИГАЦИЯ ПО ЭКРАНАМ
+function showScreen(screenId) {
+document.getElementById('sec-catalog').classList.add('hidden');
+document.getElementById('sec-details').classList.add('hidden');
+document.getElementById('sec-reader').classList.add('hidden');
+
+document.getElementById(screenId).classList.remove('hidden');
+window.scrollTo(0, 0);
+}
+
+// ОТРИСОВКА КАТАЛОГА
+function renderCatalog() {
+const grid = document.getElementById('manga-grid');
+const empty = document.getElementById('empty-state');
+const counter = document.getElementById('manga-counter');
+
+grid.innerHTML = '';
+counter.textContent = mangaList.length;
+
+if (mangaList.length === 0) {
+empty.classList.remove('hidden');
+return;
+}
+
+empty.classList.add('hidden');
+mangaList.forEach(item => {
+const card = document.createElement('div');
+card.className = 'manga-card bg-slate-900 border border-slate-800 rounded-xl overflow-hidden cursor-pointer relative';
+card.onclick = () => openMangaDetails(item.id);
+
+const lastChapterName = item.chapters.length > 0
+? item.chapters[item.chapters.length - 1].title
+: 'Нет глав';
+
+card.innerHTML = &lt;div class="pt-[140%] relative bg-slate-950"&gt; &lt;img src="${item.cover}" class="absolute inset-0 w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/300x400/1e293b/ffffff?text=Нет+обложки'">
+<div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+</div>
+<div class="p-3 absolute bottom-0 left-0 right-0">
+<h3 class="font-bold text-white text-sm truncate">${item.title}&lt;/h3&gt; &lt;p class="text-xs text-purple-400 mt-0.5 truncate"&gt;${lastChapterName}</p>
+</div>
+`;
+grid.appendChild(card);
+});
+}
+
+// ДЕТАЛИ МАНГИ
+function openMangaDetails(id) {
+currentMangaId = id;
+const manga = mangaList.find(m => m.id === id);
+if (!manga) return;
+
+document.getElementById('manga-title-text').textContent = manga.title;
+document.getElementById('manga-desc-text').textContent = manga.desc || 'Описание отсутствует.';
+document.getElementById('manga-cover-img').src = manga.cover;
+
+const container = document.getElementById('chapters-container');
+container.innerHTML = '';
+
+if (manga.chapters.length === 0) {
+container.innerHTML = '<div class="text-slate-500 text-xs py-4 text-center">Глав пока нет. Нажмите «Добавить главу».</div>';
+} else {
+// Показываем новые главы сверху
+[...manga.chapters].reverse().forEach((chap, revIdx) => {
+const realIdx = manga.chapters.length - 1 - revIdx;
+const row = document.createElement('div');
+row.className = 'flex items-center justify-between bg-slate-900 p-3 rounded-lg border border-slate-800/80';
+
+row.innerHTML = &lt;span class="font-bold text-sm text-white cursor-pointer flex-1 truncate" onclick="openChapterReader(${realIdx})">
+{realIdx})">
+<i class="fa-solid fa-trash text-xs"></i>
+</button>
+<button class="bg-purple-600 text-white text-xs px-3 py-1.5 rounded-md font-bold" onclick="openChapterReader(${realIdx})">
+Читать
+</button>
+</div>
+`;
+container.appendChild(row);
+});
+}
+
+showScreen('sec-details');
+}
+
+// ЧИТАЛКА
+function openChapterReader(chapIdx) {
+const manga = mangaList.find(m => m.id === currentMangaId);
+if (!manga || !manga.chapters[chapIdx]) return;
+
+currentChapterIdx = chapIdx;
+const chap = manga.chapters[chapIdx];
+
+document.getElementById('reader-manga-name').textContent = manga.title;
+document.getElementById('reader-chapter-name').textContent = chap.title;
+
+document.getElementById('btn-prev-chapter').disabled = (chapIdx === 0);
+document.getElementById('btn-next-chapter').disabled = (chapIdx === manga.chapters.length - 1);
+
+const imgList = document.getElementById('reader-pages-list');
+imgList.innerHTML = '';
+
+chap.images.forEach(url => {
+if (!url.trim()) return;
+const img = document.createElement('img');
+img.src = url.trim();
+img.className = 'w-full object-contain mb-1 bg-slate-950';
+img.onerror = function() {
+this.src = 'https://via.placeholder.com/800x600/1e293b/ef4444?text= Ошибка+загрузки+картинки';
+};
+imgList.appendChild(img);
+});
+
+showScreen('sec-reader');
+}
+
+function deleteChapterItem(idx) {
+if (confirm('Удалить эту главу?')) {
+const manga = mangaList.find(m => m.id === currentMangaId);
+if (manga) {
+manga.chapters.splice(idx, 1);
+saveStorageData();
+openMangaDetails(currentMangaId);
+}
+}
+}
+
+// НАВЕШИВАНИЕ СОБЫТИЙ (ГВОЗДЯМИ ДЛЯ НАДЕЖНОСТИ)
+window.addEventListener('DOMContentLoaded', () => {
+loadStorageData();
+renderCatalog();
+
+// Кнопки открытия модалок
+document.getElementById('btn-open-add-manga').onclick = () => {
+document.getElementById('modal-add-manga').classList.remove('hidden');
+};
+
+document.getElementById('btn-open-add-chapter').onclick = () => {
+document.getElementById('modal-add-chapter').classList.remove('hidden');
+};
+
+// Кнопки закрытия модалок
+document.getElementById('btn-close-modal-manga').onclick = () => {
+document.getElementById('modal-add-manga').classList.add('hidden');
+};
+
+document.getElementById('btn-close-modal-chapter').onclick = () => {
+document.getElementById('modal-add-chapter').classList.add('hidden');
+};
+
+// Логотип и Назад
+document.getElementById('btn-logo').onclick = () => {
+showScreen('sec-catalog');
+};
+
+document.getElementById('btn-back-to-catalog').onclick = () => {
+showScreen('sec-catalog');
+};
+
+document.getElementById('btn-close-reader').onclick = () => {
+showScreen('sec-details');
+};
+
+// Переключение глав
+document.getElementById('btn-prev-chapter').onclick = () => {
+if (currentChapterIdx > 0) openChapterReader(currentChapterIdx - 1);
+};
+
+document.getElementById('btn-next-chapter').onclick = () => {
+const manga = mangaList.find(m => m.id === currentMangaId);
+if (manga && currentChapterIdx < manga.chapters.length - 1) {
+openChapterReader(currentChapterIdx + 1);
+}
+};
+
+// Удаление всей манги
+document.getElementById('btn-delete-manga').onclick = () => {
+if (confirm('Вы действительно хотите удалить эту мангу?')) {
+mangaList = mangaList.filter(m => m.id !== currentMangaId);
+saveStorageData();
+renderCatalog();
+showScreen('sec-catalog');
+}
+};
+
+// Форма: Создание Манги
+document.getElementById('form-add-manga').onsubmit = (e) => {
+e.preventDefault();
+const title = document.getElementById('in-manga-title').value.trim();
+const cover = document.getElementById('in-manga-cover').value.trim();
+const desc = document.getElementById('in-manga-desc').value.trim();
+
+const newManga = {
+id: Date.now(),
+title: title,
+cover: cover,
+desc: desc,
+chapters: []
+};
+
+mangaList.push(newManga);
+saveStorageData();
+renderCatalog();
+
+// Очистка и закрытие
+document.getElementById('form-add-manga').reset();
+document.getElementById('modal-add-manga').classList.add('hidden');
+
+// Переход к созданной манге
+openMangaDetails(newManga.id);
+};
+
+// Форма: Добавление Главы
+document.getElementById('form-add-chapter').onsubmit = (e) => {
+e.preventDefault();
+const title = document.getElementById('in-chapter-title').value.trim();
+const rawUrls = document.getElementById('in-chapter-urls').value;
+const urls = rawUrls.split('\n').map(u => u.trim()).filter(u => u.length > 0);
+
+const manga = mangaList.find(m => m.id === currentMangaId);
+if (manga) {
+manga.chapters.push({
+title: title,
+images: urls
+});
+saveStorageData();
+openMangaDetails(currentMangaId);
+}
+
+document.getElementById('form-add-chapter').reset();
+document.getElementById('modal-add-chapter').classList.add('hidden');
+};
+});
+</script>
+</body>
+</html>
