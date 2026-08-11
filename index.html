@@ -33,32 +33,31 @@
             -webkit-tap-highlight-color: transparent;
         }
         
-        /* Плавность */
+        /* Утилиты блокировки скролла */
+        .no-scroll { overflow: hidden; }
+        
         .smooth-transition { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         
-        /* Скроллбар */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
         
-        /* Анимации окон */
-        .modal-enter { opacity: 1 !important; visibility: visible !important; }
+        .modal-enter { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
         .modal-enter > div { transform: scale(1) translateY(0) !important; opacity: 1 !important; }
         
         .drawer-open { transform: translateX(0) !important; }
         
-        /* Эффект карточек */
         .card-hover:active { transform: scale(0.96); }
         @media (hover: hover) { .card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 30px -10px rgba(139, 92, 246, 0.3); } }
         
-        /* Скрытие интерфейса читалки */
-        .reader-ui-hidden { transform: translateY(-100%); opacity: 0; }
+        .reader-ui-hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+        .reader-ui-hidden-bottom { transform: translateY(100%); opacity: 0; pointer-events: none; }
     </style>
 </head>
 <body class="antialiased overflow-x-hidden select-none pb-safe">
 
-    <!-- ГЛОБАЛЬНЫЙ TOAST (УВЕДОМЛЕНИЯ) -->
-    <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-[100] bg-primary-600 text-white px-5 py-3 rounded-2xl shadow-2xl font-bold flex items-center gap-3 text-sm opacity-0 pointer-events-none transform -translate-y-10 smooth-transition">
+    <!-- ГЛОБАЛЬНЫЙ TOAST -->
+    <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-[200] bg-primary-600 text-white px-5 py-3 rounded-2xl shadow-2xl font-bold flex items-center gap-3 text-sm opacity-0 pointer-events-none transform -translate-y-10 smooth-transition">
         <i class="fa-solid fa-bell text-lg"></i>
         <span id="toast-msg">Синхронизация...</span>
     </div>
@@ -66,22 +65,18 @@
     <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
     <header id="main-header" class="fixed top-0 left-0 right-0 z-40 bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-800/50 h-16 flex items-center justify-between px-4 smooth-transition">
         <div class="flex items-center gap-4">
-            <!-- Кнопка Гамбургер -->
             <button onclick="window.toggleDrawer()" class="text-zinc-400 hover:text-white p-2 text-xl active:scale-90 smooth-transition">
                 <i class="fa-solid fa-bars"></i>
             </button>
-            <!-- Лого -->
             <div class="flex items-center gap-2 cursor-pointer" onclick="window.goHome()">
                 <i class="fa-solid fa-bolt text-primary-500 text-xl"></i>
                 <span class="font-black text-xl tracking-tight hidden sm:block">Manga<span class="text-primary-500">PRO</span></span>
             </div>
         </div>
-        
         <div class="flex items-center gap-3">
-            <!-- Статус Сети -->
-            <div id="cloud-status" class="flex items-center gap-2 text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-zinc-900 px-3 py-1.5 rounded-full border border-zinc-800">
+            <div id="cloud-status" class="flex items-center gap-2 text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-zinc-900 px-3 py-1.5 rounded-full border border-zinc-800 shadow-inner">
                 <span id="status-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-                <span id="status-text" class="text-zinc-400">Соединение...</span>
+                <span id="status-text" class="text-zinc-400">Подключение...</span>
             </div>
         </div>
     </header>
@@ -90,7 +85,7 @@
     <div id="drawer-backdrop" onclick="window.toggleDrawer()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 opacity-0 invisible smooth-transition"></div>
     <div id="drawer" class="fixed top-0 left-0 bottom-0 w-72 bg-zinc-900 border-r border-zinc-800 z-50 transform -translate-x-full smooth-transition flex flex-col shadow-2xl">
         <div class="p-6 flex items-center justify-between border-b border-zinc-800">
-            <span class="font-black text-2xl">Меню</span>
+            <span class="font-black text-2xl text-white">Меню</span>
             <button onclick="window.toggleDrawer()" class="text-zinc-500 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="flex-1 overflow-y-auto py-4 flex flex-col gap-2 px-3">
@@ -100,17 +95,15 @@
             <button onclick="window.switchTab('favorites'); window.toggleDrawer()" class="flex items-center gap-4 p-3 rounded-xl hover:bg-zinc-800 text-left text-zinc-300 font-bold smooth-transition">
                 <i class="fa-solid fa-star w-6 text-center text-yellow-500"></i> Избранное
             </button>
-            
             <div class="my-2 border-t border-zinc-800 mx-3"></div>
             
-            <!-- АДМИН ПАНЕЛЬ -->
             <div id="admin-menu" class="hidden flex-col gap-2">
-                <div class="text-xs font-bold text-zinc-500 uppercase px-4 mt-2 mb-1 tracking-wider">Управление (Автор)</div>
+                <div class="text-xs font-bold text-zinc-500 uppercase px-4 mt-2 mb-1 tracking-wider">Кабинет Автора</div>
                 <button onclick="window.showModal('modal-add-manga'); window.toggleDrawer()" class="flex items-center gap-4 p-3 rounded-xl bg-primary-600/10 text-primary-400 hover:bg-primary-600/20 font-bold smooth-transition text-left">
                     <i class="fa-solid fa-plus w-6 text-center"></i> Добавить Мангу
                 </button>
                 <button onclick="window.logoutAdmin()" class="flex items-center gap-4 p-3 rounded-xl text-red-400 hover:bg-red-500/10 font-bold smooth-transition text-left mt-2">
-                    <i class="fa-solid fa-right-from-bracket w-6 text-center"></i> Выйти из Автора
+                    <i class="fa-solid fa-right-from-bracket w-6 text-center"></i> Выйти из панели
                 </button>
             </div>
             
@@ -120,37 +113,30 @@
         </div>
     </div>
 
-    <!-- ОСНОВНОЙ КОНТЕНТ -->
-    <main class="pt-20 pb-20 px-4 max-w-6xl mx-auto min-h-screen flex flex-col">
+    <!-- КОНТЕНТ -->
+    <main id="main-content" class="pt-20 pb-20 px-4 max-w-6xl mx-auto min-h-screen flex flex-col">
         
         <!-- 1. ГЛАВНАЯ СТРАНИЦА -->
         <section id="view-home" class="flex-1 flex flex-col">
             <!-- Вкладки -->
             <div class="flex gap-2 sm:gap-4 mb-6 overflow-x-auto pb-2 custom-scrollbar border-b border-zinc-800">
-                <button onclick="window.switchTab('catalog')" id="tab-catalog" class="tab-btn px-4 py-2 rounded-t-xl font-bold border-b-2 border-primary-500 text-white whitespace-nowrap smooth-transition">
-                    📚 Каталог
-                </button>
-                <button onclick="window.switchTab('latest')" id="tab-latest" class="tab-btn px-4 py-2 rounded-t-xl font-bold border-b-2 border-transparent text-zinc-500 hover:text-zinc-300 whitespace-nowrap smooth-transition">
-                    🔥 Обновления
-                </button>
-                <button onclick="window.switchTab('favorites')" id="tab-favorites" class="tab-btn px-4 py-2 rounded-t-xl font-bold border-b-2 border-transparent text-zinc-500 hover:text-zinc-300 whitespace-nowrap smooth-transition">
-                    ⭐ Избранное
-                </button>
+                <button onclick="window.switchTab('catalog')" id="tab-catalog" class="tab-btn px-4 py-2 rounded-t-xl font-bold border-b-2 border-primary-500 text-white whitespace-nowrap smooth-transition">📚 Каталог</button>
+                <button onclick="window.switchTab('latest')" id="tab-latest" class="tab-btn px-4 py-2 rounded-t-xl font-bold border-b-2 border-transparent text-zinc-500 hover:text-zinc-300 whitespace-nowrap smooth-transition">🔥 Обновления</button>
+                <button onclick="window.switchTab('favorites')" id="tab-favorites" class="tab-btn px-4 py-2 rounded-t-xl font-bold border-b-2 border-transparent text-zinc-500 hover:text-zinc-300 whitespace-nowrap smooth-transition">⭐ Избранное</button>
             </div>
 
-            <!-- Контейнер для списков -->
+            <!-- Контейнеры для контента -->
             <div id="grid-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6 relative min-h-[300px]"></div>
-            
-            <!-- Лента обновлений (Скрыта по умолчанию) -->
             <div id="latest-container" class="hidden flex-col gap-3 relative min-h-[300px]"></div>
-
+            
             <div id="empty-state" class="hidden absolute inset-0 flex flex-col items-center justify-center text-zinc-500 pointer-events-none mt-20">
                 <i class="fa-solid fa-box-open text-6xl mb-4 opacity-20"></i>
-                <p class="text-lg font-bold">Здесь пока пусто</p>
+                <p class="text-lg font-bold text-zinc-400">Здесь пока пусто</p>
+                <p class="text-sm mt-1">Добавьте мангу или подождите обновлений.</p>
             </div>
         </section>
 
-        <!-- 2. СТРАНИЦА МАНГИ -->
+        <!-- 2. СТРАНИЦА ДЕТАЛЕЙ МАНГИ -->
         <section id="view-details" class="hidden flex-1">
             <button onclick="window.goHome()" class="mb-6 text-zinc-400 hover:text-white flex items-center gap-2 text-sm bg-zinc-900 py-2.5 px-5 rounded-full w-fit border border-zinc-800 smooth-transition active:scale-95">
                 <i class="fa-solid fa-arrow-left"></i> Назад
@@ -158,52 +144,43 @@
             
             <div class="bg-zinc-900/50 rounded-[2rem] p-4 sm:p-8 border border-zinc-800/80 flex flex-col md:flex-row gap-6 sm:gap-10 shadow-2xl relative">
                 
-                <!-- Админ: Удалить мангу -->
                 <button onclick="window.deleteCurrentManga()" class="admin-only hidden absolute top-4 right-4 sm:top-8 sm:right-8 text-red-500 hover:text-white bg-red-500/10 hover:bg-red-500 w-12 h-12 rounded-2xl flex items-center justify-center smooth-transition shadow-lg" title="Удалить тайтл">
                     <i class="fa-solid fa-trash"></i>
                 </button>
 
-                <!-- Обложка -->
                 <div class="w-full md:w-72 shrink-0 relative group">
-                    <img id="det-cover" src="" class="w-full aspect-[2/3] object-cover rounded-2xl bg-zinc-950 shadow-2xl border border-zinc-800" alt="Cover">
+                    <img id="det-cover" src="" class="w-full aspect-[2/3] object-cover rounded-2xl bg-zinc-950 shadow-2xl border border-zinc-800" alt="Cover" onerror="this.src='https://via.placeholder.com/300x450/18181b/ffffff?text=Нет+обложки'">
                     <button onclick="window.toggleFavorite()" id="btn-fav" class="absolute bottom-4 right-4 w-12 h-12 bg-zinc-900/80 backdrop-blur-md border border-zinc-700 rounded-full flex items-center justify-center text-xl smooth-transition hover:scale-110 shadow-lg">
                         <i class="fa-regular fa-star text-zinc-300" id="fav-icon"></i>
                     </button>
                 </div>
                 
-                <!-- Инфо -->
                 <div class="flex-1 flex flex-col">
                     <h1 id="det-title" class="text-3xl sm:text-4xl lg:text-5xl font-black text-white pr-12 mb-4 leading-tight">...</h1>
-                    
                     <div class="bg-zinc-950/50 p-5 rounded-2xl mb-8 border border-zinc-800/50">
-                        <h3 class="text-xs font-black text-zinc-500 uppercase tracking-widest mb-3">Описание</h3>
+                        <h3 class="text-xs font-black text-zinc-500 uppercase tracking-widest mb-3">Сюжет</h3>
                         <p id="det-desc" class="text-zinc-300 text-sm sm:text-base leading-relaxed">...</p>
                     </div>
                     
                     <div class="mt-auto">
                         <div class="flex items-center justify-between mb-4 pb-4 border-b border-zinc-800">
                             <h3 class="font-black text-xl text-white">Список глав</h3>
-                            
-                            <!-- Админ: Добавить главу -->
                             <button onclick="window.showModal('modal-add-chapter')" class="admin-only hidden bg-primary-600 hover:bg-primary-500 text-white font-bold text-sm py-2 px-4 rounded-xl flex items-center gap-2 smooth-transition shadow-lg shadow-primary-600/20 active:scale-95">
-                                <i class="fa-solid fa-plus"></i> <span class="hidden sm:inline">Добавить</span>
+                                <i class="fa-solid fa-plus"></i> <span class="hidden sm:inline">Добавить главу</span>
                             </button>
                         </div>
-                        
                         <div id="det-chapters" class="flex flex-col gap-3 max-h-80 overflow-y-auto pr-2 custom-scrollbar"></div>
                     </div>
                 </div>
             </div>
         </section>
-
     </main>
 
     <!-- 3. ЧИТАЛКА (НА ВЕСЬ ЭКРАН) -->
-    <div id="view-reader" class="hidden fixed inset-0 z-50 bg-black overflow-y-auto custom-scrollbar">
-        <!-- Кликабельная зона для скрытия UI -->
-        <div id="reader-click-zone" class="absolute inset-0 z-0" onclick="window.toggleReaderUI()"></div>
+    <div id="view-reader" class="hidden fixed inset-0 z-[60] bg-black overflow-y-auto custom-scrollbar">
+        <!-- Кликабельная зона для меню (занимает весь экран под текстом) -->
+        <div id="reader-click-zone" class="fixed inset-0 z-0" onclick="window.toggleReaderUI()"></div>
         
-        <!-- Верхний бар -->
         <div id="reader-topbar" class="fixed top-0 left-0 right-0 bg-zinc-950/95 backdrop-blur-lg border-b border-zinc-800/80 p-4 flex items-center justify-between z-20 smooth-transition">
             <button onclick="window.closeReader()" class="text-zinc-400 hover:text-white bg-zinc-900 w-10 h-10 rounded-full flex items-center justify-center smooth-transition active:scale-90">
                 <i class="fa-solid fa-arrow-left"></i>
@@ -212,37 +189,35 @@
                 <div id="read-manga-title" class="text-xs font-bold text-zinc-500 uppercase tracking-widest truncate">...</div>
                 <div id="read-chapter-title" class="text-sm sm:text-base font-black text-primary-400 truncate mt-0.5">...</div>
             </div>
-            <div class="w-10"></div> <!-- Placeholder for centering -->
+            <div class="w-10 text-zinc-600 text-xl pointer-events-none text-center"><i class="fa-solid fa-mobile-screen"></i></div>
         </div>
 
-        <!-- Контейнер картинок -->
-        <div id="reader-pages" class="relative z-10 max-w-[800px] mx-auto pt-24 pb-10 flex flex-col items-center min-h-screen pointer-events-none">
-            <!-- Картинки будут здесь -->
+        <div id="reader-pages" class="relative z-10 max-w-[800px] mx-auto flex flex-col items-center min-h-screen pointer-events-none mt-[72px] mb-20 bg-black">
+            <!-- Сюда вставляются страницы -->
         </div>
 
-        <!-- Нижний бар навигации -->
-        <div id="reader-bottombar" class="relative z-20 max-w-[800px] mx-auto px-4 pb-12 pt-6">
-            <div class="grid grid-cols-2 gap-4">
-                <button id="btn-prev-chap" onclick="window.changeChapter(-1)" class="bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-white font-bold py-4 rounded-2xl smooth-transition disabled:opacity-30 disabled:cursor-not-allowed active:scale-95 flex items-center justify-center gap-2">
+        <div id="reader-bottombar" class="fixed bottom-0 left-0 right-0 bg-zinc-950/95 backdrop-blur-lg border-t border-zinc-800/80 p-4 z-20 smooth-transition">
+            <div class="max-w-[800px] mx-auto grid grid-cols-2 gap-4">
+                <button id="btn-prev-chap" onclick="window.changeChapter(-1)" class="bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-white font-bold py-3 sm:py-4 rounded-xl smooth-transition disabled:opacity-30 disabled:cursor-not-allowed active:scale-95 flex items-center justify-center gap-2">
                     <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">Предыдущая</span>
                 </button>
-                <button id="btn-next-chap" onclick="window.changeChapter(1)" class="bg-primary-600 hover:bg-primary-500 text-white font-bold py-4 rounded-2xl smooth-transition disabled:opacity-30 disabled:cursor-not-allowed active:scale-95 shadow-xl shadow-primary-600/20 flex items-center justify-center gap-2">
+                <button id="btn-next-chap" onclick="window.changeChapter(1)" class="bg-primary-600 hover:bg-primary-500 text-white font-bold py-3 sm:py-4 rounded-xl smooth-transition disabled:opacity-30 disabled:cursor-not-allowed active:scale-95 shadow-lg shadow-primary-600/20 flex items-center justify-center gap-2">
                     <span class="hidden sm:inline">Следующая</span> <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- МОДАЛЬНЫЕ ОКНА (Скрыты по умолчанию) -->
+    <!-- МОДАЛЬНЫЕ ОКНА -->
     
     <!-- Вход для автора -->
-    <div id="modal-auth" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 opacity-0 invisible smooth-transition">
+    <div id="modal-auth" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 opacity-0 invisible pointer-events-none smooth-transition">
         <div class="bg-zinc-900 border border-zinc-800 w-full max-w-sm rounded-[2rem] p-8 shadow-2xl transform scale-95 translate-y-10 smooth-transition text-center">
             <div class="w-16 h-16 bg-primary-600/10 text-primary-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
                 <i class="fa-solid fa-crown"></i>
             </div>
             <h3 class="text-2xl font-black text-white mb-2">Создатель</h3>
-            <p class="text-sm text-zinc-500 mb-8">Введите ПИН-код для управления контентом</p>
+            <p class="text-sm text-zinc-500 mb-8">Введите ПИН-код (1234)</p>
             <form onsubmit="window.loginAdmin(event)" class="space-y-4">
                 <input type="password" id="in-admin-pass" required class="w-full bg-zinc-950 border border-zinc-800 rounded-2xl p-4 text-center text-white tracking-widest font-bold text-xl focus:outline-none focus:border-primary-500 smooth-transition" placeholder="****">
                 <button type="submit" class="w-full bg-primary-600 hover:bg-primary-500 text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 smooth-transition">Войти</button>
@@ -252,7 +227,7 @@
     </div>
 
     <!-- Добавить Мангу -->
-    <div id="modal-add-manga" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 opacity-0 invisible smooth-transition">
+    <div id="modal-add-manga" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 opacity-0 invisible pointer-events-none smooth-transition">
         <div class="bg-zinc-900 border border-zinc-800 w-full max-w-md rounded-[2rem] p-6 sm:p-8 shadow-2xl transform scale-95 translate-y-10 smooth-transition">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-black text-white">Новый тайтл</h3>
@@ -264,20 +239,20 @@
                     <input type="text" id="in-title" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-4 text-white focus:border-primary-500 outline-none" placeholder="Берсерк">
                 </div>
                 <div>
-                    <label class="block text-xs font-black text-zinc-500 uppercase tracking-widest mb-2">Ссылка на обложку (URL)</label>
+                    <label class="block text-xs font-black text-zinc-500 uppercase tracking-widest mb-2">Обложка (URL)</label>
                     <input type="url" id="in-cover" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-4 text-white focus:border-primary-500 outline-none" placeholder="https://...">
                 </div>
                 <div>
                     <label class="block text-xs font-black text-zinc-500 uppercase tracking-widest mb-2">Сюжет</label>
-                    <textarea id="in-desc" rows="3" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-4 text-white focus:border-primary-500 outline-none resize-none" placeholder="Краткое описание..."></textarea>
+                    <textarea id="in-desc" rows="3" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-4 text-white focus:border-primary-500 outline-none resize-none" placeholder="Описание..."></textarea>
                 </div>
-                <button type="submit" id="btn-submit-manga" class="w-full bg-primary-600 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 smooth-transition mt-2">Опубликовать в онлайн</button>
+                <button type="submit" id="btn-submit-manga" class="w-full bg-primary-600 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 smooth-transition mt-2">Опубликовать</button>
             </form>
         </div>
     </div>
 
     <!-- Добавить Главу -->
-    <div id="modal-add-chapter" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 opacity-0 invisible smooth-transition">
+    <div id="modal-add-chapter" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 opacity-0 invisible pointer-events-none smooth-transition">
         <div class="bg-zinc-900 border border-zinc-800 w-full max-w-md rounded-[2rem] p-6 sm:p-8 shadow-2xl transform scale-95 translate-y-10 smooth-transition">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-black text-white">Новая глава</h3>
@@ -286,28 +261,36 @@
             <form onsubmit="window.submitChapter(event)" class="space-y-5">
                 <div>
                     <label class="block text-xs font-black text-zinc-500 uppercase tracking-widest mb-2">Название главы</label>
-                    <input type="text" id="in-chap-title" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-4 text-white focus:border-primary-500 outline-none" placeholder="Глава 1: Начало">
+                    <input type="text" id="in-chap-title" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-4 text-white focus:border-primary-500 outline-none" placeholder="Глава 1">
                 </div>
                 <div>
-                    <label class="block text-xs font-black text-zinc-500 uppercase tracking-widest mb-2">Ссылки на страницы (Каждая с новой строки)</label>
-                    <textarea id="in-chap-urls" required rows="6" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-4 text-white text-xs whitespace-pre focus:border-primary-500 outline-none" placeholder="https://page1.jpg&#10;https://page2.jpg"></textarea>
+                    <label class="block text-xs font-black text-zinc-500 uppercase tracking-widest mb-2">Ссылки (каждая с новой строки)</label>
+                    <textarea id="in-chap-urls" required rows="6" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-4 text-white text-xs whitespace-pre focus:border-primary-500 outline-none" placeholder="https://raw.githubusercontent.com/.../img1.jpg&#10;https://.../img2.jpg"></textarea>
                 </div>
-                <button type="submit" id="btn-submit-chapter" class="w-full bg-primary-600 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 smooth-transition mt-2">Загрузить главу</button>
+                <button type="submit" id="btn-submit-chapter" class="w-full bg-primary-600 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 smooth-transition mt-2">Загрузить в базу</button>
             </form>
         </div>
     </div>
 
     <!-- FIREBASE И ЛОГИКА -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // НАСТРОЙКИ
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'manga-web-pro-v3';
-        const ADMIN_PIN = "1234"; // Твой секретный пароль для создания
+        // ТВОЯ КОНФИГУРАЦИЯ FIREBASE (Mangaweb)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCz1zBOWTXWZHnUjzQq2-Tsh20df-O_qb4",
+            authDomain: "mangaweb-ee8fc.firebaseapp.com",
+            projectId: "mangaweb-ee8fc",
+            storageBucket: "mangaweb-ee8fc.firebasestorage.app",
+            messagingSenderId: "415476811249",
+            appId: "1:415476811249:web:4c1169537a0d2491833050"
+        };
 
-        // СОСТОЯНИЕ
+        const appIdStr = 'mangaweb-ee8fc'; 
+        const ADMIN_PIN = "1234";
+
         let dbRef = null;
         let authRef = null;
         let user = null;
@@ -316,45 +299,42 @@
         let dbChapters = [];
         let favoriteIds = [];
         
-        let currentTab = 'catalog'; // catalog, latest, favorites
+        let currentTab = 'catalog';
         let currentMangaId = null;
         let currentChapIdx = null;
         let isUiHidden = false;
         
-        // Экспорт функций в окно для HTML
         window.isAdmin = localStorage.getItem('MW_IS_ADMIN') === 'true';
 
-        // --- 1. ИНИЦИАЛИЗАЦИЯ ---
+        // --- ИНИЦИАЛИЗАЦИЯ ---
         async function initApp() {
             loadFavorites();
             checkAdminStatus();
             
-            const config = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-            if (!config) {
-                setNetStatus('offline', 'Оффлайн');
-                return;
-            }
-
             try {
-                const app = initializeApp(config);
+                const app = initializeApp(firebaseConfig);
                 authRef = getAuth(app);
                 dbRef = getFirestore(app);
 
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(authRef, __initial_auth_token);
-                } else {
+                // Попытка анонимного входа
+                try {
                     await signInAnonymously(authRef);
+                } catch (authError) {
+                    console.warn("Анонимный вход не настроен в Firebase! Продолжаем без него.", authError);
+                    // Если не включен, мы все равно попытаемся подписаться на данные (если правила Firebase позволяют)
+                    setNetStatus('online', 'Подключено (без Auth)');
+                    listenData();
                 }
 
                 onAuthStateChanged(authRef, (u) => {
                     user = u;
                     if (user) {
-                        setNetStatus('online', 'В сети');
+                        setNetStatus('online', 'Онлайн (База данных)');
                         listenData();
                     }
                 });
             } catch (err) {
-                console.error("Firebase Error:", err);
+                console.error("Firebase Init Error:", err);
                 setNetStatus('error', 'Ошибка сети');
             }
         }
@@ -362,21 +342,26 @@
         function setNetStatus(type, text) {
             const dot = document.getElementById('status-dot');
             document.getElementById('status-text').textContent = text;
-            
             dot.className = 'w-2 h-2 rounded-full ' + 
                 (type === 'online' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]' : 
                  type === 'error' ? 'bg-red-500' : 'bg-amber-500 animate-pulse');
         }
 
         function listenData() {
-            if (!user || !dbRef) return;
+            if (!dbRef) return;
             
-            onSnapshot(collection(dbRef, 'artifacts', appId, 'public', 'data', 'mangas'), (snap) => {
+            // Используем структуру artifacts/appId/public/data как стандарт
+            const mRef = collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'mangas');
+            onSnapshot(mRef, (snap) => {
                 dbMangas = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => b.createdAt - a.createdAt);
                 refreshUI();
+            }, (err) => {
+                console.error("Ошибка загрузки манги. Проверь правила Firestore!", err);
+                showToast("Ошибка доступа к базе данных.");
             });
 
-            onSnapshot(collection(dbRef, 'artifacts', appId, 'public', 'data', 'chapters'), (snap) => {
+            const cRef = collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'chapters');
+            onSnapshot(cRef, (snap) => {
                 dbChapters = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => b.createdAt - a.createdAt);
                 refreshUI();
             });
@@ -387,7 +372,7 @@
             if (!document.getElementById('view-details').classList.contains('hidden') && currentMangaId) renderDetails(currentMangaId);
         }
 
-        // --- 2. ВНУТРЕННЯЯ ЛОГИКА И ЗАКЛАДКИ ---
+        // --- ЗАКЛАДКИ ---
         function loadFavorites() {
             try { favoriteIds = JSON.parse(localStorage.getItem('MW_FAVS') || '[]'); } catch(e) { favoriteIds = []; }
         }
@@ -406,10 +391,10 @@
                 showToast('Удалено из Избранного');
             }
             saveFavorites();
-            renderDetails(currentMangaId); // обновить иконку
+            renderDetails(currentMangaId);
         }
 
-        // --- 3. АДМИНКА ---
+        // --- АДМИНКА ---
         function checkAdminStatus() {
             const els = document.querySelectorAll('.admin-only');
             els.forEach(el => window.isAdmin ? el.classList.remove('hidden') : el.classList.add('hidden'));
@@ -450,18 +435,18 @@
             showToast('Вы вышли из режима Автора');
         }
 
-        // --- 4. НАВИГАЦИЯ ---
+        // --- НАВИГАЦИЯ И ВКЛАДКИ ---
         window.goHome = function() {
             document.getElementById('view-details').classList.add('hidden');
             document.getElementById('view-reader').classList.add('hidden');
             document.getElementById('view-home').classList.remove('hidden');
-            window.scrollTo(0,0);
+            document.body.classList.remove('no-scroll'); // Возвращаем скролл
+            window.scrollTo({ top: 0, behavior: 'instant' });
             window.switchTab(currentTab);
         }
 
         window.switchTab = function(tabId) {
             currentTab = tabId;
-            // Активный стиль вкладок
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('border-primary-500', 'text-white');
                 btn.classList.add('border-transparent', 'text-zinc-500');
@@ -480,37 +465,29 @@
             grid.classList.add('hidden'); latest.classList.add('hidden'); empty.classList.add('hidden');
 
             let items = [];
-            
             if (tabId === 'catalog') {
                 items = dbMangas;
                 grid.classList.remove('hidden');
                 renderGrid(items, grid, empty);
-            } 
-            else if (tabId === 'favorites') {
+            } else if (tabId === 'favorites') {
                 items = dbMangas.filter(m => favoriteIds.includes(m.id));
                 grid.classList.remove('hidden');
                 renderGrid(items, grid, empty);
-            }
-            else if (tabId === 'latest') {
+            } else if (tabId === 'latest') {
                 latest.classList.remove('hidden');
-                // Берем 20 последних глав
-                const recentChaps = [...dbChapters].sort((a,b) => b.createdAt - a.createdAt).slice(0, 20);
+                const recentChaps = [...dbChapters].sort((a,b) => b.createdAt - a.createdAt).slice(0, 30);
                 if (recentChaps.length === 0) empty.classList.remove('hidden');
                 else {
                     recentChaps.forEach(chap => {
                         const manga = dbMangas.find(m => m.id === chap.mangaId);
                         if (!manga) return;
                         
-                        // Формат времени
                         const d = new Date(chap.createdAt);
-                        const timeStr = `${d.getDate()}.${d.getMonth()+1} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
+                        const timeStr = `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 
                         const el = document.createElement('div');
                         el.className = 'flex items-center gap-4 bg-zinc-900/80 p-3 rounded-2xl border border-zinc-800 cursor-pointer card-hover';
-                        el.onclick = () => {
-                            window.openMangaDetails(manga.id);
-                            // Ищем индекс этой главы в манге, чтобы открыть ридер (опционально)
-                        };
+                        el.onclick = () => window.openMangaDetails(manga.id);
                         el.innerHTML = `
                             <img src="${manga.cover}" class="w-14 h-14 rounded-xl object-cover bg-zinc-950 shadow-md">
                             <div class="flex-1 min-w-0">
@@ -527,17 +504,16 @@
 
         function renderGrid(arr, container, emptyEl) {
             if (arr.length === 0) { emptyEl.classList.remove('hidden'); return; }
-            
             arr.forEach(manga => {
                 const chaps = dbChapters.filter(c => c.mangaId === manga.id);
-                const lastChap = chaps.length > 0 ? chaps[0].title : 'Нет глав'; // Т.к. главы отсортированы по убыванию даты
+                const lastChap = chaps.length > 0 ? chaps[0].title : 'Нет глав';
 
                 const card = document.createElement('div');
-                card.className = 'card-hover bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden cursor-pointer relative shadow-lg group';
+                card.className = 'card-hover bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden cursor-pointer relative shadow-lg group flex flex-col';
                 card.onclick = () => window.openMangaDetails(manga.id);
                 card.innerHTML = `
-                    <div class="pt-[140%] relative bg-zinc-950">
-                        <img src="${manga.cover}" class="absolute inset-0 w-full h-full object-cover smooth-transition group-hover:scale-105" onerror="this.src='https://via.placeholder.com/300x400/18181b/ffffff?text=Нет+обложки'">
+                    <div class="pt-[140%] relative bg-zinc-950 w-full">
+                        <img src="${manga.cover}" class="absolute inset-0 w-full h-full object-cover smooth-transition group-hover:scale-105" onerror="this.src='https://via.placeholder.com/300x450/18181b/ffffff?text=Нет+обложки'">
                         <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent"></div>
                     </div>
                     <div class="p-4 absolute bottom-0 left-0 right-0">
@@ -549,13 +525,14 @@
             });
         }
 
-        // --- 5. ДЕТАЛИ ---
+        // --- ДЕТАЛИ ---
         window.openMangaDetails = function(id) {
             currentMangaId = id;
             document.getElementById('view-home').classList.add('hidden');
             document.getElementById('view-reader').classList.add('hidden');
             document.getElementById('view-details').classList.remove('hidden');
-            window.scrollTo(0,0);
+            document.body.classList.remove('no-scroll');
+            window.scrollTo({ top: 0, behavior: 'instant' });
             renderDetails(id);
         }
 
@@ -578,14 +555,12 @@
 
             const cList = document.getElementById('det-chapters');
             cList.innerHTML = '';
-            
-            // Главы манги, отсортированные по времени (Новые сверху)
             const mChaps = dbChapters.filter(c => c.mangaId === id);
             
             if (mChaps.length === 0) {
                 cList.innerHTML = '<div class="text-zinc-500 text-sm font-bold py-6 text-center border-2 border-dashed border-zinc-800 rounded-2xl">Главы еще не вышли</div>';
             } else {
-                mChaps.forEach((chap, idx) => {
+                mChaps.forEach((chap) => {
                     const row = document.createElement('div');
                     row.className = 'flex items-center justify-between bg-zinc-950/60 hover:bg-zinc-800 p-3 sm:p-4 rounded-2xl border border-zinc-800/80 smooth-transition';
                     
@@ -611,10 +586,9 @@
             }
         }
 
-        // --- 6. ЧИТАЛКА ---
+        // --- ЧИТАЛКА ---
         window.startReading = function(chapId) {
             const mChaps = dbChapters.filter(c => c.mangaId === currentMangaId);
-            // Индекс в массиве mChaps (где 0 - самая новая)
             const idx = mChaps.findIndex(c => c.id === chapId);
             if (idx === -1) return;
             
@@ -625,30 +599,31 @@
             document.getElementById('read-manga-title').textContent = manga.title;
             document.getElementById('read-chapter-title').textContent = chap.title;
             
-            // В массиве mChaps индекс 0 = новейшая глава.
-            // Значит "Следующая" глава (сюжетно) - это индекс idx - 1.
-            // "Предыдущая" глава (сюжетно) - это индекс idx + 1.
+            // Кнопки навигации по сюжету
             document.getElementById('btn-next-chap').disabled = (idx === 0);
             document.getElementById('btn-prev-chap').disabled = (idx === mChaps.length - 1);
 
             const pages = document.getElementById('reader-pages');
             pages.innerHTML = '';
             
-            chap.images.forEach((url, i) => {
+            chap.images.forEach((url) => {
                 if(!url.trim()) return;
                 const img = document.createElement('img');
                 img.src = url.trim();
-                img.className = 'w-full object-contain mb-0 pointer-events-auto';
+                img.className = 'w-full object-contain pointer-events-none';
                 pages.appendChild(img);
             });
 
-            // Показываем интерфейс читалки
             isUiHidden = false;
             document.getElementById('reader-topbar').classList.remove('reader-ui-hidden');
+            document.getElementById('reader-bottombar').classList.remove('reader-ui-hidden-bottom');
             
             document.getElementById('view-details').classList.add('hidden');
             document.getElementById('view-reader').classList.remove('hidden');
-            window.scrollTo(0,0);
+            
+            // Блокируем скролл основной страницы, пока открыта читалка
+            document.body.classList.add('no-scroll');
+            document.getElementById('view-reader').scrollTo({ top: 0, behavior: 'instant' });
         }
 
         window.closeReader = function() {
@@ -656,9 +631,6 @@
         }
 
         window.changeChapter = function(dir) {
-            // dir: 1 (След), -1 (Пред)
-            // У нас массив от новых к старым (0 - новая, N - старая)
-            // След. по сюжету -> идем к индексу 0 (т.е. idx - 1)
             const newIdx = currentChapIdx - dir; 
             const mChaps = dbChapters.filter(c => c.mangaId === currentMangaId);
             if (newIdx >= 0 && newIdx < mChaps.length) {
@@ -668,15 +640,21 @@
 
         window.toggleReaderUI = function() {
             isUiHidden = !isUiHidden;
-            const bar = document.getElementById('reader-topbar');
-            if (isUiHidden) bar.classList.add('reader-ui-hidden');
-            else bar.classList.remove('reader-ui-hidden');
+            const top = document.getElementById('reader-topbar');
+            const bottom = document.getElementById('reader-bottombar');
+            if (isUiHidden) {
+                top.classList.add('reader-ui-hidden');
+                bottom.classList.add('reader-ui-hidden-bottom');
+            } else {
+                top.classList.remove('reader-ui-hidden');
+                bottom.classList.remove('reader-ui-hidden-bottom');
+            }
         }
 
-        // --- 7. СОЗДАНИЕ И УДАЛЕНИЕ (ТОЛЬКО ДЛЯ АВТОРА) ---
+        // --- СОЗДАНИЕ В БАЗЕ ---
         window.submitManga = async function(e) {
             e.preventDefault();
-            if (!window.isAdmin || !dbRef || !user) return;
+            if (!window.isAdmin || !dbRef) return;
             const btn = document.getElementById('btn-submit-manga');
             btn.disabled = true; btn.textContent = 'Публикация...';
 
@@ -685,21 +663,21 @@
             const desc = document.getElementById('in-desc').value.trim();
 
             try {
-                await addDoc(collection(dbRef, 'artifacts', appId, 'public', 'data', 'mangas'), {
+                await addDoc(collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'mangas'), {
                     title, cover, desc, createdAt: Date.now()
                 });
                 showToast('Манга успешно опубликована!');
                 document.getElementById('form-add-manga').reset();
                 window.hideModal('modal-add-manga');
             } catch (err) {
-                showToast('Ошибка публикации');
+                showToast('Ошибка. Возможно нет прав в базе.');
             }
-            btn.disabled = false; btn.textContent = 'Опубликовать в онлайн';
+            btn.disabled = false; btn.textContent = 'Опубликовать';
         }
 
         window.submitChapter = async function(e) {
             e.preventDefault();
-            if (!window.isAdmin || !dbRef || !user) return;
+            if (!window.isAdmin || !dbRef) return;
             const btn = document.getElementById('btn-submit-chapter');
             btn.disabled = true; btn.textContent = 'Загрузка...';
 
@@ -707,7 +685,7 @@
             const urls = document.getElementById('in-chap-urls').value.split('\n').map(u=>u.trim()).filter(u=>u.length>0);
 
             try {
-                await addDoc(collection(dbRef, 'artifacts', appId, 'public', 'data', 'chapters'), {
+                await addDoc(collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'chapters'), {
                     mangaId: currentMangaId, title, images: urls, createdAt: Date.now()
                 });
                 showToast('Глава добавлена!');
@@ -716,14 +694,13 @@
             } catch (err) {
                 showToast('Ошибка загрузки');
             }
-            btn.disabled = false; btn.textContent = 'Загрузить главу';
+            btn.disabled = false; btn.textContent = 'Загрузить в базу';
         }
 
         window.deleteCurrentManga = async function() {
             if(!window.isAdmin || !confirm('Удалить мангу навсегда?')) return;
             try {
-                await deleteDoc(doc(dbRef, 'artifacts', appId, 'public', 'data', 'mangas', currentMangaId));
-                // По-хорошему тут еще удалить главы, но для упрощения удаляем сам тайтл.
+                await deleteDoc(doc(dbRef, 'artifacts', appIdStr, 'public', 'data', 'mangas', currentMangaId));
                 showToast('Тайтл удален');
                 window.goHome();
             } catch (e) { showToast('Ошибка удаления'); }
@@ -732,20 +709,22 @@
         window.deleteChap = async function(id) {
             if(!window.isAdmin || !confirm('Удалить главу?')) return;
             try {
-                await deleteDoc(doc(dbRef, 'artifacts', appId, 'public', 'data', 'chapters', id));
+                await deleteDoc(doc(dbRef, 'artifacts', appIdStr, 'public', 'data', 'chapters', id));
                 showToast('Глава удалена');
             } catch (e) { showToast('Ошибка удаления'); }
         }
 
-        // --- 8. UI УТИЛИТЫ ---
+        // --- УПРАВЛЕНИЕ МОДАЛКАМИ ---
         window.showModal = function(id) {
             const el = document.getElementById(id);
             el.classList.remove('invisible');
+            document.body.classList.add('no-scroll');
             setTimeout(() => el.classList.add('modal-enter'), 10);
         }
         window.hideModal = function(id) {
             const el = document.getElementById(id);
             el.classList.remove('modal-enter');
+            document.body.classList.remove('no-scroll');
             setTimeout(() => el.classList.add('invisible'), 300);
         }
         window.toggleDrawer = function() {
@@ -754,11 +733,13 @@
             if (d.classList.contains('drawer-open')) {
                 d.classList.remove('drawer-open');
                 bg.classList.remove('opacity-100');
+                document.body.classList.remove('no-scroll');
                 setTimeout(() => bg.classList.add('invisible', 'opacity-0'), 300);
             } else {
                 bg.classList.remove('invisible', 'opacity-0');
                 bg.classList.add('opacity-100');
                 d.classList.add('drawer-open');
+                document.body.classList.add('no-scroll');
             }
         }
         function showToast(msg) {
