@@ -89,7 +89,7 @@
     <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
     <header id="main-header" class="fixed top-0 left-0 right-0 z-40 bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-800/50 h-16 flex items-center justify-between px-4 smooth-transition shadow-sm">
         <div class="flex items-center gap-4">
-            <button onclick="window.toggleDrawer()" class="text-zinc-400 hover:text-white p-2 text-xl active:scale-90 smooth-transition">
+            <button type="button" onclick="window.toggleDrawer()" class="text-zinc-400 hover:text-white p-2 text-xl active:scale-90 smooth-transition">
                 <i class="fa-solid fa-bars"></i>
             </button>
             <div class="flex items-center gap-2 cursor-pointer group" onclick="window.goHome()">
@@ -118,43 +118,43 @@
                     <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mt-1">Открой свою мангу</span>
                 </div>
             </div>
-            <button onclick="window.toggleDrawer()" class="text-zinc-500 hover:text-white text-xl smooth-transition active:scale-90"><i class="fa-solid fa-xmark"></i></button>
+            <button type="button" onclick="window.toggleDrawer()" class="text-zinc-500 hover:text-white text-xl smooth-transition active:scale-90"><i class="fa-solid fa-xmark"></i></button>
         </div>
         
         <div class="flex-1 overflow-y-auto py-2 flex flex-col gap-1 px-2 custom-scrollbar">
-            <button onclick="window.goHome(); window.toggleDrawer()" class="menu-item-hover flex items-center justify-between p-3 rounded-xl hover:bg-zinc-800/60 text-zinc-300 font-bold smooth-transition group">
+            <button type="button" onclick="window.goHome(); window.toggleDrawer()" class="menu-item-hover flex items-center justify-between p-3 rounded-xl hover:bg-zinc-800/60 text-zinc-300 font-bold smooth-transition group">
                 <div class="flex items-center gap-4"><i class="fa-solid fa-list-ul w-5 text-center text-zinc-500 group-hover:text-primary-400 smooth-transition"></i> Каталог</div>
                 <i class="fa-solid fa-chevron-down text-[10px] text-zinc-600"></i>
             </button>
-            <button onclick="window.switchTab('latest'); window.toggleDrawer()" class="menu-item-hover flex items-center justify-between p-3 rounded-xl hover:bg-zinc-800/60 text-zinc-300 font-bold smooth-transition group">
+            <button type="button" onclick="window.switchTab('latest'); window.toggleDrawer()" class="menu-item-hover flex items-center justify-between p-3 rounded-xl hover:bg-zinc-800/60 text-zinc-300 font-bold smooth-transition group">
                 <div class="flex items-center gap-4"><i class="fa-solid fa-fire-flame-curved w-5 text-center text-zinc-500 group-hover:text-orange-400 smooth-transition"></i> Сейчас читают</div>
             </button>
-            <button onclick="window.switchTab('favorites'); window.toggleDrawer()" class="menu-item-hover flex items-center justify-between p-3 rounded-xl hover:bg-zinc-800/60 text-zinc-300 font-bold smooth-transition group">
+            <button type="button" onclick="window.switchTab('favorites'); window.toggleDrawer()" class="menu-item-hover flex items-center justify-between p-3 rounded-xl hover:bg-zinc-800/60 text-zinc-300 font-bold smooth-transition group">
                 <div class="flex items-center gap-4"><i class="fa-solid fa-star w-5 text-center text-zinc-500 group-hover:text-yellow-400 smooth-transition"></i> Коллекции (Избранное)</div>
             </button>
 
             <div class="my-2 border-t border-zinc-800/50 mx-3"></div>
 
-            <button onclick="window.comingSoon()" class="menu-item-hover flex items-center justify-between p-3 rounded-xl hover:bg-zinc-800/60 text-zinc-300 font-bold smooth-transition group">
+            <button type="button" onclick="window.comingSoon()" class="menu-item-hover flex items-center justify-between p-3 rounded-xl hover:bg-zinc-800/60 text-zinc-300 font-bold smooth-transition group">
                 <div class="flex items-center gap-4"><i class="fa-regular fa-newspaper w-5 text-center text-zinc-500 group-hover:text-white smooth-transition"></i> Новости</div>
             </button>
-            <button onclick="window.comingSoon()" class="menu-item-hover flex items-center justify-between p-3 rounded-xl hover:bg-zinc-800/60 text-zinc-300 font-bold smooth-transition group">
+            <button type="button" onclick="window.comingSoon()" class="menu-item-hover flex items-center justify-between p-3 rounded-xl hover:bg-zinc-800/60 text-zinc-300 font-bold smooth-transition group">
                 <div class="flex items-center gap-4"><i class="fa-solid fa-users w-5 text-center text-zinc-500 group-hover:text-white smooth-transition"></i> Команды</div>
             </button>
-            <button onclick="window.comingSoon()" class="menu-item-hover flex items-center justify-between p-3 rounded-xl hover:bg-zinc-800/60 text-zinc-300 font-bold smooth-transition group">
+            <button type="button" onclick="window.comingSoon()" class="menu-item-hover flex items-center justify-between p-3 rounded-xl hover:bg-zinc-800/60 text-zinc-300 font-bold smooth-transition group">
                 <div class="flex items-center gap-4"><i class="fa-solid fa-user w-5 text-center text-zinc-500 group-hover:text-white smooth-transition"></i> Персоны</div>
             </button>
-            <button onclick="window.comingSoon()" class="menu-item-hover flex items-center justify-between p-3 rounded-xl hover:bg-zinc-800/60 text-zinc-300 font-bold smooth-transition group">
+            <button type="button" onclick="window.comingSoon()" class="menu-item-hover flex items-center justify-between p-3 rounded-xl hover:bg-zinc-800/60 text-zinc-300 font-bold smooth-transition group">
                 <div class="flex items-center gap-4"><i class="fa-solid fa-building w-5 text-center text-zinc-500 group-hover:text-white smooth-transition"></i> Издательства</div>
             </button>
 
             <div class="my-2 border-t border-zinc-800/50 mx-3"></div>
 
-            <button onclick="window.openGenres(); window.toggleDrawer()" class="menu-item-hover flex items-center justify-between p-3 rounded-xl hover:bg-zinc-800/60 text-zinc-300 font-bold smooth-transition group">
+            <button type="button" onclick="window.openGenres(); window.toggleDrawer()" class="menu-item-hover flex items-center justify-between p-3 rounded-xl hover:bg-zinc-800/60 text-zinc-300 font-bold smooth-transition group">
                 <div class="flex items-center gap-4"><i class="fa-solid fa-masks-theater w-5 text-center text-zinc-500 group-hover:text-purple-400 smooth-transition"></i> Жанры</div>
                 <i class="fa-solid fa-chevron-right text-[10px] text-zinc-600"></i>
             </button>
-            <button onclick="window.openTags(); window.toggleDrawer()" class="menu-item-hover flex items-center justify-between p-3 rounded-xl hover:bg-zinc-800/60 text-zinc-300 font-bold smooth-transition group">
+            <button type="button" onclick="window.openTags(); window.toggleDrawer()" class="menu-item-hover flex items-center justify-between p-3 rounded-xl hover:bg-zinc-800/60 text-zinc-300 font-bold smooth-transition group">
                 <div class="flex items-center gap-4"><i class="fa-solid fa-tags w-5 text-center text-zinc-500 group-hover:text-blue-400 smooth-transition"></i> Теги</div>
                 <i class="fa-solid fa-chevron-right text-[10px] text-zinc-600"></i>
             </button>
@@ -168,21 +168,21 @@
                 </div>
             </div>
 
-            <button onclick="window.randomManga()" class="mt-2 mx-2 mb-2 flex items-center justify-center gap-2 p-3.5 rounded-xl bg-accent-600/20 border border-accent-500/30 text-accent-500 hover:bg-accent-600 hover:text-white font-black smooth-transition shadow-[0_0_15px_rgba(16,185,129,0.15)] hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] active:scale-95">
+            <button type="button" onclick="window.randomManga()" class="mt-2 mx-2 mb-2 flex items-center justify-center gap-2 p-3.5 rounded-xl bg-accent-600/20 border border-accent-500/30 text-accent-500 hover:bg-accent-600 hover:text-white font-black smooth-transition shadow-[0_0_15px_rgba(16,185,129,0.15)] hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] active:scale-95">
                 <i class="fa-solid fa-dice text-lg"></i> Случайный тайтл
             </button>
 
             <div id="admin-menu" class="hidden flex-col gap-1 border-t border-zinc-800/50 mt-2 pt-2 mx-2">
                 <div class="text-[10px] font-black text-primary-500 uppercase px-2 mt-2 mb-1 tracking-widest">Панель Автора</div>
-                <button onclick="window.openAddMangaModal(); window.toggleDrawer()" class="flex items-center gap-4 p-3 rounded-xl bg-primary-600/10 text-primary-400 hover:bg-primary-600/20 font-bold smooth-transition text-left">
+                <button type="button" onclick="window.openAddMangaModal(); window.toggleDrawer()" class="flex items-center gap-4 p-3 rounded-xl bg-primary-600/10 text-primary-400 hover:bg-primary-600/20 font-bold smooth-transition text-left">
                     <i class="fa-solid fa-plus w-5 text-center"></i> Добавить Мангу
                 </button>
-                <button onclick="window.logoutAdmin()" class="flex items-center gap-4 p-3 rounded-xl text-red-400 hover:bg-red-500/10 font-bold smooth-transition text-left mt-1">
+                <button type="button" onclick="window.logoutAdmin()" class="flex items-center gap-4 p-3 rounded-xl text-red-400 hover:bg-red-500/10 font-bold smooth-transition text-left mt-1">
                     <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Выйти
                 </button>
             </div>
             
-            <button id="btn-login-admin" onclick="window.showModal('modal-auth'); window.toggleDrawer()" class="flex items-center gap-4 p-3 rounded-xl hover:bg-zinc-800/60 text-left text-zinc-500 font-bold smooth-transition mt-auto mb-4 mx-2">
+            <button type="button" id="btn-login-admin" onclick="window.showModal('modal-auth'); window.toggleDrawer()" class="flex items-center gap-4 p-3 rounded-xl hover:bg-zinc-800/60 text-left text-zinc-500 font-bold smooth-transition mt-auto mb-4 mx-2">
                 <i class="fa-solid fa-lock w-5 text-center"></i> Вход для Автора
             </button>
         </div>
@@ -194,9 +194,9 @@
         <!-- 1. ГЛАВНАЯ СТРАНИЦА -->
         <section id="view-home" class="view-section flex-1 flex flex-col animate-fade-in">
             <div class="flex gap-2 sm:gap-4 mb-6 overflow-x-auto pb-2 custom-scrollbar border-b border-zinc-800">
-                <button onclick="window.switchTab('catalog')" id="tab-catalog" class="tab-btn px-4 py-2.5 rounded-t-xl font-black border-b-2 border-primary-500 text-white whitespace-nowrap smooth-transition tracking-wide"><i class="fa-solid fa-book-open mr-2"></i>Каталог</button>
-                <button onclick="window.switchTab('latest')" id="tab-latest" class="tab-btn px-4 py-2.5 rounded-t-xl font-black border-b-2 border-transparent text-zinc-500 hover:text-zinc-300 whitespace-nowrap smooth-transition tracking-wide"><i class="fa-solid fa-fire mr-2"></i>Обновления</button>
-                <button onclick="window.switchTab('favorites')" id="tab-favorites" class="tab-btn px-4 py-2.5 rounded-t-xl font-black border-b-2 border-transparent text-zinc-500 hover:text-zinc-300 whitespace-nowrap smooth-transition tracking-wide"><i class="fa-solid fa-star mr-2 text-yellow-500/70"></i>Избранное</button>
+                <button type="button" onclick="window.switchTab('catalog')" id="tab-catalog" class="tab-btn px-4 py-2.5 rounded-t-xl font-black border-b-2 border-primary-500 text-white whitespace-nowrap smooth-transition tracking-wide"><i class="fa-solid fa-book-open mr-2"></i>Каталог</button>
+                <button type="button" onclick="window.switchTab('latest')" id="tab-latest" class="tab-btn px-4 py-2.5 rounded-t-xl font-black border-b-2 border-transparent text-zinc-500 hover:text-zinc-300 whitespace-nowrap smooth-transition tracking-wide"><i class="fa-solid fa-fire mr-2"></i>Обновления</button>
+                <button type="button" onclick="window.switchTab('favorites')" id="tab-favorites" class="tab-btn px-4 py-2.5 rounded-t-xl font-black border-b-2 border-transparent text-zinc-500 hover:text-zinc-300 whitespace-nowrap smooth-transition tracking-wide"><i class="fa-solid fa-star mr-2 text-yellow-500/70"></i>Избранное</button>
             </div>
 
             <div id="grid-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6 relative min-h-[300px]"></div>
@@ -235,7 +235,7 @@
 
         <!-- 4. СТРАНИЦА: РЕЗУЛЬТАТЫ ФИЛЬТРАЦИИ -->
         <section id="view-filtered" class="view-section hidden flex-1 animate-slide-up">
-            <button onclick="window.goBackToFilters()" class="mb-6 text-zinc-400 hover:text-white flex items-center gap-2 text-sm bg-zinc-900/80 py-2.5 px-5 rounded-full w-fit border border-zinc-800 smooth-transition hover:bg-zinc-800 active:scale-95 shadow-md">
+            <button type="button" onclick="window.goBackToFilters()" class="mb-6 text-zinc-400 hover:text-white flex items-center gap-2 text-sm bg-zinc-900/80 py-2.5 px-5 rounded-full w-fit border border-zinc-800 smooth-transition hover:bg-zinc-800 active:scale-95 shadow-md">
                 <i class="fa-solid fa-arrow-left"></i> Назад
             </button>
             <div class="mb-6">
@@ -250,7 +250,7 @@
 
         <!-- 5. СТРАНИЦА ДЕТАЛЕЙ МАНГИ -->
         <section id="view-details" class="view-section hidden flex-1 animate-slide-up">
-            <button onclick="window.goHome()" class="mb-6 text-zinc-400 hover:text-white flex items-center gap-2 text-sm bg-zinc-900/80 py-2.5 px-5 rounded-full w-fit border border-zinc-800 smooth-transition hover:bg-zinc-800 active:scale-95 shadow-md">
+            <button type="button" onclick="window.goHome()" class="mb-6 text-zinc-400 hover:text-white flex items-center gap-2 text-sm bg-zinc-900/80 py-2.5 px-5 rounded-full w-fit border border-zinc-800 smooth-transition hover:bg-zinc-800 active:scale-95 shadow-md">
                 <i class="fa-solid fa-arrow-left"></i> Назад в каталог
             </button>
             
@@ -259,7 +259,7 @@
 
                 <div class="w-full md:w-72 shrink-0 relative group z-10">
                     <img id="det-cover" src="" class="w-full aspect-[2/3] object-cover rounded-2xl bg-zinc-950 shadow-2xl border border-zinc-800 smooth-transition group-hover:shadow-[0_20px_50px_-15px_rgba(124,58,237,0.5)]" alt="Cover" onerror="this.src='https://via.placeholder.com/300x450/18181b/ffffff?text=Нет+обложки'">
-                    <button onclick="window.toggleFavorite()" id="btn-fav" class="absolute bottom-4 right-4 w-12 h-12 bg-zinc-900/90 backdrop-blur-md border border-zinc-700 rounded-full flex items-center justify-center text-xl smooth-transition hover:scale-110 shadow-xl">
+                    <button type="button" onclick="window.toggleFavorite()" id="btn-fav" class="absolute bottom-4 right-4 w-12 h-12 bg-zinc-900/90 backdrop-blur-md border border-zinc-700 rounded-full flex items-center justify-center text-xl smooth-transition hover:scale-110 shadow-xl">
                         <i class="fa-regular fa-star text-zinc-300" id="fav-icon"></i>
                     </button>
                 </div>
@@ -268,12 +268,16 @@
                     <h1 id="det-title" class="text-3xl sm:text-4xl lg:text-5xl font-black text-white pr-12 mb-4 leading-tight tracking-tight">...</h1>
                     
                     <!-- ПАНЕЛЬ УПРАВЛЕНИЯ ДЛЯ АВТОРА -->
-                    <div id="admin-actions-box" class="admin-only hidden flex flex-wrap gap-3 mb-6 p-4 rounded-2xl bg-zinc-950/80 border border-zinc-800 shadow-inner">
-                        <button type="button" onclick="window.openAddChapterModal()" class="bg-primary-600 hover:bg-primary-500 text-white font-black text-xs uppercase tracking-wider py-3 px-5 rounded-xl flex items-center gap-2 smooth-transition shadow-lg shadow-primary-600/30 active:scale-95 cursor-pointer">
+                    <div id="admin-actions-box" class="admin-only hidden flex flex-wrap gap-2 mb-6 p-4 rounded-2xl bg-zinc-950/80 border border-zinc-800 shadow-inner">
+                        <button type="button" onclick="window.openAddChapterModal()" class="bg-primary-600 hover:bg-primary-500 text-white font-black text-xs uppercase tracking-wider py-2.5 px-4 rounded-xl flex items-center gap-2 smooth-transition shadow-lg shadow-primary-600/30 active:scale-95 cursor-pointer">
                             <i class="fa-solid fa-plus"></i> Добавить главу
                         </button>
-                        <button type="button" onclick="window.deleteCurrentManga()" class="bg-red-500/10 hover:bg-red-600 text-red-500 hover:text-white font-black text-xs uppercase tracking-wider py-3 px-5 rounded-xl flex items-center gap-2 smooth-transition active:scale-95 border border-red-500/20 cursor-pointer">
-                            <i class="fa-solid fa-trash"></i> Удалить тайтл
+                        <!-- НОВАЯ КНОПКА ДЛЯ ИЗМЕНЕНИЯ ТЕГОВ СУЩЕСТВУЮЩЕЙ МАНГИ -->
+                        <button type="button" onclick="window.openEditTagsModal()" class="bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider py-2.5 px-4 rounded-xl flex items-center gap-2 smooth-transition shadow-lg shadow-blue-600/30 active:scale-95 cursor-pointer">
+                            <i class="fa-solid fa-pen-to-square"></i> Изменить теги
+                        </button>
+                        <button type="button" onclick="window.deleteCurrentManga()" class="bg-red-500/10 hover:bg-red-600 text-red-500 hover:text-white font-black text-xs uppercase tracking-wider py-2.5 px-4 rounded-xl flex items-center gap-2 smooth-transition active:scale-95 border border-red-500/20 cursor-pointer ml-auto sm:ml-0">
+                            <i class="fa-solid fa-trash"></i> Удалить
                         </button>
                     </div>
 
@@ -304,7 +308,7 @@
         <div id="reader-click-zone" class="fixed inset-0 z-0" onclick="window.toggleReaderUI()"></div>
         
         <div id="reader-topbar" class="fixed top-0 left-0 right-0 bg-zinc-950/95 backdrop-blur-xl border-b border-zinc-800/80 p-4 flex items-center justify-between z-20 smooth-transition shadow-lg">
-            <!-- ИСПРАВЛЕННАЯ КНОПКА ВОЗВРАТА НАЗАД С КАТАЛИЗАТОРОМ СОБЫТИЙ -->
+            <!-- КНОПКА ВОЗВРАТА НАЗАД -->
             <button type="button" onclick="event.stopPropagation(); window.closeReader()" class="text-zinc-400 hover:text-white bg-zinc-900 w-10 h-10 rounded-full flex items-center justify-center smooth-transition hover:bg-zinc-800 active:scale-90 cursor-pointer relative z-30" title="Вернуться назад">
                 <i class="fa-solid fa-arrow-left"></i>
             </button>
@@ -379,15 +383,38 @@
 
                 <div>
                     <label class="block text-xs font-black text-primary-400 uppercase tracking-widest mb-2"><i class="fa-solid fa-masks-theater mr-1"></i> Выберите жанры</label>
-                    <div id="form-genres-container" class="flex flex-wrap gap-2"></div>
+                    <div id="form-genres-container" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto custom-scrollbar p-1"></div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-black text-blue-400 uppercase tracking-widest mb-2"><i class="fa-solid fa-tags mr-1"></i> Выберите теги</label>
-                    <div id="form-tags-container" class="flex flex-wrap gap-2"></div>
+                    <div id="form-tags-container" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto custom-scrollbar p-1"></div>
                 </div>
 
                 <button type="submit" id="btn-submit-manga" class="w-full bg-primary-600 hover:bg-primary-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary-600/30 active:scale-95 smooth-transition mt-4 cursor-pointer">Опубликовать в каталог</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Редактировать Теги и Жанры (НОВОЕ МОДАЛЬНОЕ ОКНО) -->
+    <div id="modal-edit-tags" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 opacity-0 invisible pointer-events-none smooth-transition">
+        <div class="bg-zinc-900 border border-zinc-800 w-full max-w-2xl max-h-[90vh] overflow-y-auto custom-scrollbar rounded-[2rem] p-6 sm:p-8 shadow-2xl transform scale-95 translate-y-10 smooth-transition">
+            <div class="flex justify-between items-center mb-6 sticky top-0 bg-zinc-900 z-10 pb-2 border-b border-zinc-800/80">
+                <h3 class="text-2xl font-black text-white">Редактировать жанры</h3>
+                <button type="button" onclick="window.hideModal('modal-edit-tags')" class="text-zinc-500 hover:text-white bg-zinc-800/50 hover:bg-zinc-800 w-10 h-10 rounded-full smooth-transition active:scale-90 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="form-edit-tags" onsubmit="window.submitEditTags(event)" class="space-y-6">
+                <div>
+                    <label class="block text-xs font-black text-primary-400 uppercase tracking-widest mb-2"><i class="fa-solid fa-masks-theater mr-1"></i> Жанры</label>
+                    <div id="edit-genres-container" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto custom-scrollbar p-1"></div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-black text-blue-400 uppercase tracking-widest mb-2"><i class="fa-solid fa-tags mr-1"></i> Теги</label>
+                    <div id="edit-tags-container" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto custom-scrollbar p-1"></div>
+                </div>
+
+                <button type="submit" id="btn-submit-edit-tags" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-600/30 active:scale-95 smooth-transition mt-4 cursor-pointer">Сохранить изменения</button>
             </form>
         </div>
     </div>
@@ -417,7 +444,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCz1zBOWTXWZHnUjzQq2-Tsh20df-O_qb4",
@@ -445,25 +472,44 @@
         let currentChapIdx = null;
         let isUiHidden = false;
         
+        // РАСШИРЕННЫЙ СПИСОК ЖАНРОВ
         const GENRES = [
             { id: 'shonen', name: 'Сёнэн', img: 'https://images.unsplash.com/photo-1612036782180-6f0b6ce846ce?auto=format&fit=crop&w=400&q=80' },
+            { id: 'shojo', name: 'Сёдзё', img: 'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?auto=format&fit=crop&w=400&q=80' },
+            { id: 'seinen', name: 'Сэйнэн', img: 'https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?auto=format&fit=crop&w=400&q=80' },
             { id: 'fantasy', name: 'Фэнтези', img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80' },
             { id: 'romance', name: 'Романтика', img: 'https://images.unsplash.com/photo-1518199266791-5375a83164ba?auto=format&fit=crop&w=400&q=80' },
             { id: 'isekai', name: 'Исекай', img: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80' },
             { id: 'action', name: 'Боевик', img: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=400&q=80' },
             { id: 'comedy', name: 'Комедия', img: 'https://images.unsplash.com/photo-1545696563-aafbc2385317?auto=format&fit=crop&w=400&q=80' },
             { id: 'drama', name: 'Драма', img: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=400&q=80' },
-            { id: 'slice', name: 'Повседневность', img: 'https://images.unsplash.com/photo-1494548162494-384bba4ab999?auto=format&fit=crop&w=400&q=80' }
+            { id: 'slice', name: 'Повседневность', img: 'https://images.unsplash.com/photo-1494548162494-384bba4ab999?auto=format&fit=crop&w=400&q=80' },
+            { id: 'mecha', name: 'Меха', img: 'https://images.unsplash.com/photo-1535295972055-1c762f4483e5?auto=format&fit=crop&w=400&q=80' },
+            { id: 'thriller', name: 'Триллер', img: 'https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80' },
+            { id: 'horror', name: 'Ужасы', img: 'https://images.unsplash.com/photo-1505635552518-3448ff116af3?auto=format&fit=crop&w=400&q=80' },
+            { id: 'sports', name: 'Спорт', img: 'https://images.unsplash.com/photo-1461896836934-ffe145ab6420?auto=format&fit=crop&w=400&q=80' },
+            { id: 'school', name: 'Школа', img: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=400&q=80' },
+            { id: 'history', name: 'Исторический', img: 'https://images.unsplash.com/photo-1461360370896-922624d12aa1?auto=format&fit=crop&w=400&q=80' }
         ];
 
+        // РАСШИРЕННЫЙ СПИСОК ТЕГОВ
         const TAGS = [
             'ГГ имба', 'Магия', 'Перерождение', 'Монстры', 'Академия', 
             'Система', 'Подземелья', 'Выживание', 'Умный ГГ', 'Месть', 
-            'Культивация', 'Демоны', 'Боги', 'Геймер', 'Злодей', 'Возвращение'
+            'Культивация', 'Демоны', 'Боги', 'Геймер', 'Злодей', 'Возвращение',
+            'Алхимия', 'Антигерой', 'Артефакты', 'Бессмертие', 'Боевые искусства', 
+            'Вампиры', 'Виртуальная реальность', 'ГГ женщина', 'ГГ мужчина', 
+            'Жестокий мир', 'Зомби', 'Игры', 'Империя', 'Космос', 'Мутанты', 
+            'Навыки', 'Наемники', 'Нежить', 'Ниндзя', 'Политика', 'Предательство', 
+            'Путешествие во времени', 'Роботы', 'Самураи', 'Скрытие личности', 
+            'Эльфы'
         ];
 
         let selectedGenresForm = [];
         let selectedTagsForm = [];
+        let selectedGenresEdit = [];
+        let selectedTagsEdit = [];
+        
         let currentFilterType = null;
         let currentFilterValue = null;
 
@@ -558,6 +604,18 @@
 
         window.openAddMangaModal = function() { selectedGenresForm = []; selectedTagsForm = []; renderFormBadges(); window.showModal('modal-add-manga'); }
         window.openAddChapterModal = function() { window.showModal('modal-add-chapter'); }
+        
+        window.openEditTagsModal = function() {
+            if(!currentMangaId) return;
+            const manga = dbMangas.find(m => m.id === currentMangaId);
+            if(!manga) return;
+            
+            selectedGenresEdit = manga.genres ? [...manga.genres] : [];
+            selectedTagsEdit = manga.tags ? [...manga.tags] : [];
+            
+            renderEditBadges();
+            window.showModal('modal-edit-tags');
+        }
 
         function renderFormBadges() {
             const gCont = document.getElementById('form-genres-container'); gCont.innerHTML = '';
@@ -574,6 +632,25 @@
                 btn.className = `badge-selectable text-xs font-bold px-3 py-1.5 rounded-lg border ${isActive ? 'bg-blue-600 text-white border-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'bg-zinc-900 border-zinc-700 text-zinc-400'}`;
                 btn.textContent = t;
                 btn.onclick = () => { if(isActive) selectedTagsForm = selectedTagsForm.filter(x => x !== t); else selectedTagsForm.push(t); renderFormBadges(); };
+                tCont.appendChild(btn);
+            });
+        }
+
+        function renderEditBadges() {
+            const gCont = document.getElementById('edit-genres-container'); gCont.innerHTML = '';
+            GENRES.forEach(g => {
+                const btn = document.createElement('div'); const isActive = selectedGenresEdit.includes(g.name);
+                btn.className = `badge-selectable text-xs font-bold px-3 py-1.5 rounded-lg border ${isActive ? 'badge-active' : 'bg-zinc-900 border-zinc-700 text-zinc-400'}`;
+                btn.textContent = g.name;
+                btn.onclick = () => { if(isActive) selectedGenresEdit = selectedGenresEdit.filter(x => x !== g.name); else selectedGenresEdit.push(g.name); renderEditBadges(); };
+                gCont.appendChild(btn);
+            });
+            const tCont = document.getElementById('edit-tags-container'); tCont.innerHTML = '';
+            TAGS.forEach(t => {
+                const btn = document.createElement('div'); const isActive = selectedTagsEdit.includes(t);
+                btn.className = `badge-selectable text-xs font-bold px-3 py-1.5 rounded-lg border ${isActive ? 'bg-blue-600 text-white border-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'bg-zinc-900 border-zinc-700 text-zinc-400'}`;
+                btn.textContent = t;
+                btn.onclick = () => { if(isActive) selectedTagsEdit = selectedTagsEdit.filter(x => x !== t); else selectedTagsEdit.push(t); renderEditBadges(); };
                 tCont.appendChild(btn);
             });
         }
@@ -666,7 +743,7 @@
 
         window.changeChapter = function(dir) { const newIdx = currentChapIdx + dir; const mChaps = dbChapters.filter(c => c.mangaId === currentMangaId); if (newIdx >= 0 && newIdx < mChaps.length) window.startReading(mChaps[newIdx].id); }
         
-        // НАДЕЖНАЯ ФУНКЦИЯ ЗАКРЫТИЯ ЧИТАЛКИ И ВОЗВРАТА К ТАЙТЛУ
+        // ФУНКЦИЯ ЗАКРЫТИЯ ЧИТАЛКИ И ВОЗВРАТА К ТАЙТЛУ
         window.closeReader = function() { 
             document.getElementById('view-reader').classList.add('hidden');
             document.body.classList.remove('no-scroll');
@@ -696,6 +773,28 @@
                 window.hideModal('modal-add-manga'); 
             } catch (err) { showToast('Ошибка. Возможно нет прав в базе.', 'fa-circle-xmark'); }
             btn.disabled = false; btn.innerHTML = 'Опубликовать в каталог';
+        }
+        
+        // СОХРАНЕНИЕ ИЗМЕНЕННЫХ ТЕГОВ И ЖАНРОВ
+        window.submitEditTags = async function(e) {
+            e.preventDefault();
+            if (!window.isAdmin || !dbRef || !currentMangaId) return;
+            const btn = document.getElementById('btn-submit-edit-tags'); 
+            btn.disabled = true; 
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Сохранение...';
+            try {
+                await updateDoc(doc(dbRef, 'artifacts', appIdStr, 'public', 'data', 'mangas', currentMangaId), {
+                    genres: selectedGenresEdit,
+                    tags: selectedTagsEdit
+                });
+                showToast('Теги успешно обновлены!', 'fa-check');
+                window.hideModal('modal-edit-tags');
+                // renderDetails вызовется автоматически благодаря onSnapshot
+            } catch (err) {
+                showToast('Ошибка сохранения', 'fa-circle-xmark');
+            }
+            btn.disabled = false; 
+            btn.innerHTML = 'Сохранить изменения';
         }
 
         window.submitChapter = async function(e) {
@@ -790,4 +889,5 @@
     </script>
 </body>
 </html>
+
 
