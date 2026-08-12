@@ -73,7 +73,6 @@
             -webkit-text-fill-color: transparent;
         }
         
-        /* Стили для жанров и тегов */
         .badge-selectable { cursor: pointer; user-select: none; transition: all 0.2s ease; }
         .badge-selectable:active { transform: scale(0.9); }
         .badge-active { background-color: #7c3aed !important; color: white !important; border-color: #8b5cf6 !important; box-shadow: 0 0 10px rgba(139, 92, 246, 0.5); }
@@ -123,7 +122,6 @@
         </div>
         
         <div class="flex-1 overflow-y-auto py-2 flex flex-col gap-1 px-2 custom-scrollbar">
-            <!-- Основные вкладки -->
             <button onclick="window.goHome(); window.toggleDrawer()" class="menu-item-hover flex items-center justify-between p-3 rounded-xl hover:bg-zinc-800/60 text-zinc-300 font-bold smooth-transition group">
                 <div class="flex items-center gap-4"><i class="fa-solid fa-list-ul w-5 text-center text-zinc-500 group-hover:text-primary-400 smooth-transition"></i> Каталог</div>
                 <i class="fa-solid fa-chevron-down text-[10px] text-zinc-600"></i>
@@ -137,7 +135,6 @@
 
             <div class="my-2 border-t border-zinc-800/50 mx-3"></div>
 
-            <!-- Вкладки, которые ты просил вернуть -->
             <button onclick="window.comingSoon()" class="menu-item-hover flex items-center justify-between p-3 rounded-xl hover:bg-zinc-800/60 text-zinc-300 font-bold smooth-transition group">
                 <div class="flex items-center gap-4"><i class="fa-regular fa-newspaper w-5 text-center text-zinc-500 group-hover:text-white smooth-transition"></i> Новости</div>
             </button>
@@ -153,7 +150,6 @@
 
             <div class="my-2 border-t border-zinc-800/50 mx-3"></div>
 
-            <!-- Жанры и Теги -->
             <button onclick="window.openGenres(); window.toggleDrawer()" class="menu-item-hover flex items-center justify-between p-3 rounded-xl hover:bg-zinc-800/60 text-zinc-300 font-bold smooth-transition group">
                 <div class="flex items-center gap-4"><i class="fa-solid fa-masks-theater w-5 text-center text-zinc-500 group-hover:text-purple-400 smooth-transition"></i> Жанры</div>
                 <i class="fa-solid fa-chevron-right text-[10px] text-zinc-600"></i>
@@ -163,33 +159,19 @@
                 <i class="fa-solid fa-chevron-right text-[10px] text-zinc-600"></i>
             </button>
 
-            <!-- СЛЕДИТЕ ЗА НАМИ (Соцсети) -->
             <div class="mt-4 mb-2 mx-2">
                 <div class="text-[10px] font-black text-zinc-500 uppercase px-2 mb-2 tracking-widest">Следите за нами</div>
                 <div class="flex gap-2 px-2">
-                    <!-- ЗАМЕНИ СИМВОЛ # НА ССЫЛКУ НА СВОЙ TELEGRAM -->
-                    <a href="#" target="_blank" class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white flex items-center justify-center text-lg smooth-transition active:scale-90">
-                        <i class="fa-brands fa-telegram"></i>
-                    </a>
-                    
-                    <!-- ЗАМЕНИ СИМВОЛ # НА ССЫЛКУ НА СВОЙ VK -->
-                    <a href="#" target="_blank" class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-500 hover:bg-indigo-500 hover:text-white flex items-center justify-center text-lg smooth-transition active:scale-90">
-                        <i class="fa-brands fa-vk"></i>
-                    </a>
-                    
-                    <!-- ЗАМЕНИ СИМВОЛ # НА ССЫЛКУ НА СВОЙ DISCORD -->
-                    <a href="#" target="_blank" class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-500 hover:bg-purple-500 hover:text-white flex items-center justify-center text-lg smooth-transition active:scale-90">
-                        <i class="fa-brands fa-discord"></i>
-                    </a>
+                    <a href="#" target="_blank" class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white flex items-center justify-center text-lg smooth-transition active:scale-90"><i class="fa-brands fa-telegram"></i></a>
+                    <a href="#" target="_blank" class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-500 hover:bg-indigo-500 hover:text-white flex items-center justify-center text-lg smooth-transition active:scale-90"><i class="fa-brands fa-vk"></i></a>
+                    <a href="#" target="_blank" class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-500 hover:bg-purple-500 hover:text-white flex items-center justify-center text-lg smooth-transition active:scale-90"><i class="fa-brands fa-discord"></i></a>
                 </div>
             </div>
 
-            <!-- Случайный тайтл -->
             <button onclick="window.randomManga()" class="mt-2 mx-2 mb-2 flex items-center justify-center gap-2 p-3.5 rounded-xl bg-accent-600/20 border border-accent-500/30 text-accent-500 hover:bg-accent-600 hover:text-white font-black smooth-transition shadow-[0_0_15px_rgba(16,185,129,0.15)] hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] active:scale-95">
                 <i class="fa-solid fa-dice text-lg"></i> Случайный тайтл
             </button>
 
-            <!-- Админ панель -->
             <div id="admin-menu" class="hidden flex-col gap-1 border-t border-zinc-800/50 mt-2 pt-2 mx-2">
                 <div class="text-[10px] font-black text-primary-500 uppercase px-2 mt-2 mb-1 tracking-widest">Панель Автора</div>
                 <button onclick="window.openAddMangaModal(); window.toggleDrawer()" class="flex items-center gap-4 p-3 rounded-xl bg-primary-600/10 text-primary-400 hover:bg-primary-600/20 font-bold smooth-transition text-left">
@@ -237,9 +219,7 @@
                 </h2>
                 <p class="text-zinc-400 text-sm">Выберите жанр, чтобы найти подходящую мангу.</p>
             </div>
-            <div id="genres-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                <!-- Жанры генерируются через JS -->
-            </div>
+            <div id="genres-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
         </section>
 
         <!-- 3. СТРАНИЦА: ТЕГИ -->
@@ -250,9 +230,7 @@
                 </h2>
                 <p class="text-zinc-400 text-sm">Детальный поиск по особенностям сюжета.</p>
             </div>
-            <div id="tags-cloud" class="flex flex-wrap gap-3">
-                <!-- Теги генерируются через JS -->
-            </div>
+            <div id="tags-cloud" class="flex flex-wrap gap-3"></div>
         </section>
 
         <!-- 4. СТРАНИЦА: РЕЗУЛЬТАТЫ ФИЛЬТРАЦИИ -->
@@ -261,9 +239,7 @@
                 <i class="fa-solid fa-arrow-left"></i> Назад
             </button>
             <div class="mb-6">
-                <h2 id="filtered-title" class="text-2xl sm:text-3xl font-black text-white mb-2 flex items-center gap-3">
-                    Результаты
-                </h2>
+                <h2 id="filtered-title" class="text-2xl sm:text-3xl font-black text-white mb-2 flex items-center gap-3">Результаты</h2>
             </div>
             <div id="filtered-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6 relative min-h-[300px]"></div>
             <div id="filtered-empty" class="hidden absolute inset-0 flex flex-col items-center justify-center text-zinc-500 pointer-events-none mt-20">
@@ -281,10 +257,6 @@
             <div class="bg-zinc-900/60 backdrop-blur-xl rounded-[2rem] p-4 sm:p-8 border border-zinc-800/80 flex flex-col md:flex-row gap-6 sm:gap-10 shadow-2xl relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-64 h-64 bg-primary-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
-                <button onclick="window.deleteCurrentManga()" class="admin-only hidden absolute top-4 right-4 sm:top-8 sm:right-8 text-red-500 hover:text-white bg-red-500/10 hover:bg-red-500 w-12 h-12 rounded-2xl flex items-center justify-center smooth-transition shadow-lg z-10" title="Удалить тайтл">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
-
                 <div class="w-full md:w-72 shrink-0 relative group z-10">
                     <img id="det-cover" src="" class="w-full aspect-[2/3] object-cover rounded-2xl bg-zinc-950 shadow-2xl border border-zinc-800 smooth-transition group-hover:shadow-[0_20px_50px_-15px_rgba(124,58,237,0.5)]" alt="Cover" onerror="this.src='https://via.placeholder.com/300x450/18181b/ffffff?text=Нет+обложки'">
                     <button onclick="window.toggleFavorite()" id="btn-fav" class="absolute bottom-4 right-4 w-12 h-12 bg-zinc-900/90 backdrop-blur-md border border-zinc-700 rounded-full flex items-center justify-center text-xl smooth-transition hover:scale-110 shadow-xl">
@@ -295,7 +267,16 @@
                 <div class="flex-1 flex flex-col z-10">
                     <h1 id="det-title" class="text-3xl sm:text-4xl lg:text-5xl font-black text-white pr-12 mb-4 leading-tight tracking-tight">...</h1>
                     
-                    <!-- Блок с Жанрами и Тегами -->
+                    <!-- УДОБНАЯ ПАНЕЛЬ УПРАВЛЕНИЯ ДЛЯ АВТОРА (Тут удаление манги и добавление глав) -->
+                    <div class="admin-only hidden flex flex-wrap gap-3 mb-6 p-4 rounded-2xl bg-zinc-950/80 border border-zinc-800 shadow-inner">
+                        <button onclick="window.showModal('modal-add-chapter')" class="bg-primary-600 hover:bg-primary-500 text-white font-black text-xs uppercase tracking-wider py-3 px-5 rounded-xl flex items-center gap-2 smooth-transition shadow-lg shadow-primary-600/30 active:scale-95">
+                            <i class="fa-solid fa-plus"></i> Добавить главу
+                        </button>
+                        <button onclick="window.deleteCurrentManga()" class="bg-red-500/10 hover:bg-red-600 text-red-500 hover:text-white font-black text-xs uppercase tracking-wider py-3 px-5 rounded-xl flex items-center gap-2 smooth-transition active:scale-95 border border-red-500/20">
+                            <i class="fa-solid fa-trash"></i> Удалить тайтл
+                        </button>
+                    </div>
+
                     <div class="flex flex-wrap gap-2 mb-6" id="det-badges"></div>
 
                     <div class="bg-zinc-950/60 p-5 rounded-2xl mb-8 border border-zinc-800/50 shadow-inner">
@@ -310,9 +291,6 @@
                             <h3 class="font-black text-xl text-white flex items-center gap-2">
                                 <i class="fa-solid fa-layer-group text-primary-500"></i> Список глав
                             </h3>
-                            <button onclick="window.showModal('modal-add-chapter')" class="admin-only hidden bg-primary-600 hover:bg-primary-500 text-white font-bold text-sm py-2 px-4 rounded-xl flex items-center gap-2 smooth-transition shadow-lg shadow-primary-600/30 active:scale-95">
-                                <i class="fa-solid fa-plus"></i> <span class="hidden sm:inline">Добавить главу</span>
-                            </button>
                         </div>
                         <div id="det-chapters" class="flex flex-col gap-3 max-h-80 overflow-y-auto pr-2 custom-scrollbar"></div>
                     </div>
@@ -333,7 +311,14 @@
                 <div id="read-manga-title" class="text-[10px] font-black text-zinc-500 uppercase tracking-widest truncate mb-0.5">...</div>
                 <div id="read-chapter-title" class="text-sm sm:text-base font-black text-white truncate drop-shadow-md">...</div>
             </div>
-            <div class="w-10 text-primary-500 text-xl pointer-events-none text-center"><i class="fa-solid fa-mobile-screen"></i></div>
+            
+            <!-- КНОПКА УДАЛЕНИЯ ГЛАВЫ ПРЯМО В ЧИТАЛКЕ (Видно только автору) -->
+            <div class="flex items-center gap-2">
+                <button onclick="window.deleteCurrentReadingChapter()" class="admin-only hidden text-red-400 hover:text-white bg-red-500/20 hover:bg-red-600 w-10 h-10 rounded-full flex items-center justify-center smooth-transition active:scale-90" title="Удалить эту главу">
+                    <i class="fa-solid fa-trash text-sm"></i>
+                </button>
+                <div class="w-10 text-primary-500 text-xl pointer-events-none text-center hidden sm:block"><i class="fa-solid fa-mobile-screen"></i></div>
+            </div>
         </div>
 
         <div id="reader-pages" class="relative z-10 w-full max-w-[800px] mx-auto flex flex-col items-center mt-[72px] mb-[80px] bg-[#09090b]" onclick="window.toggleReaderUI()"></div>
@@ -456,6 +441,7 @@
         
         let currentTab = 'catalog';
         let currentMangaId = null;
+        let currentChapId = null;
         let currentChapIdx = null;
         let isUiHidden = false;
         
@@ -635,15 +621,18 @@
             const cList = document.getElementById('det-chapters'); cList.innerHTML = ''; const mChaps = dbChapters.filter(c => c.mangaId === id);
             if (mChaps.length === 0) cList.innerHTML = '<div class="text-zinc-500 text-sm font-bold py-8 text-center border-2 border-dashed border-zinc-800/80 rounded-2xl bg-zinc-950/30">Главы еще не вышли</div>';
             else mChaps.forEach((chap) => {
-                const row = document.createElement('div'); row.className = 'flex items-center justify-between bg-zinc-950/60 hover:bg-zinc-800 p-3 sm:p-4 rounded-2xl border border-zinc-800/80 smooth-transition group cursor-pointer'; row.onclick = (e) => { if(!e.target.closest('button.text-zinc-600')) window.startReading(chap.id); };
-                let delBtn = window.isAdmin ? `<button onclick="window.deleteChap('${chap.id}')" class="text-zinc-600 hover:text-red-400 p-2 smooth-transition active:scale-90"><i class="fa-solid fa-trash"></i></button>` : '';
-                row.innerHTML = `<span class="font-black text-sm text-zinc-200 flex-1 truncate group-hover:text-primary-400 smooth-transition group-hover:translate-x-1">${chap.title}</span><div class="flex items-center gap-1 sm:gap-2 pl-2">${delBtn}<button class="bg-primary-600/10 text-primary-500 group-hover:bg-primary-600 group-hover:text-white group-hover:shadow-[0_0_15px_rgba(124,58,237,0.4)] text-xs px-4 py-2 rounded-xl font-black smooth-transition active:scale-95">Читать</button></div>`;
+                const row = document.createElement('div'); row.className = 'flex items-center justify-between bg-zinc-950/60 hover:bg-zinc-800 p-3 sm:p-4 rounded-2xl border border-zinc-800/80 smooth-transition group cursor-pointer'; 
+                row.onclick = (e) => { if(!e.target.closest('button')) window.startReading(chap.id); };
+                
+                let delBtn = window.isAdmin ? `<button onclick="window.deleteChap('${chap.id}')" class="text-zinc-500 hover:text-red-400 bg-zinc-900 hover:bg-red-500/10 p-2.5 rounded-xl smooth-transition active:scale-90" title="Удалить главу"><i class="fa-solid fa-trash"></i></button>` : '';
+                row.innerHTML = `<span class="font-black text-sm text-zinc-200 flex-1 truncate group-hover:text-primary-400 smooth-transition group-hover:translate-x-1">${chap.title}</span><div class="flex items-center gap-2 pl-2">${delBtn}<button class="bg-primary-600/10 text-primary-500 group-hover:bg-primary-600 group-hover:text-white group-hover:shadow-[0_0_15px_rgba(124,58,237,0.4)] text-xs px-4 py-2.5 rounded-xl font-black smooth-transition active:scale-95">Читать</button></div>`;
                 cList.appendChild(row);
             });
         }
 
         window.startReading = function(chapId) {
             const mChaps = dbChapters.filter(c => c.mangaId === currentMangaId); const idx = mChaps.findIndex(c => c.id === chapId); if (idx === -1) return;
+            currentChapId = chapId;
             currentChapIdx = idx; const chap = mChaps[idx]; const manga = dbMangas.find(m => m.id === currentMangaId);
             document.getElementById('read-manga-title').textContent = manga.title; document.getElementById('read-chapter-title').textContent = chap.title;
             document.getElementById('btn-next-chap').disabled = (idx === 0); document.getElementById('btn-prev-chap').disabled = (idx === mChaps.length - 1);
@@ -677,6 +666,15 @@
 
         window.deleteCurrentManga = async function() { if(!window.isAdmin || !confirm('Удалить мангу навсегда?')) return; try { await deleteDoc(doc(dbRef, 'artifacts', appIdStr, 'public', 'data', 'mangas', currentMangaId)); showToast('Тайтл удален', 'fa-trash'); window.goHome(); } catch (e) { showToast('Ошибка удаления', 'fa-circle-xmark'); } }
         window.deleteChap = async function(id) { if(!window.isAdmin || !confirm('Удалить главу?')) return; try { await deleteDoc(doc(dbRef, 'artifacts', appIdStr, 'public', 'data', 'chapters', id)); showToast('Глава удалена', 'fa-trash'); } catch (e) { showToast('Ошибка удаления', 'fa-circle-xmark'); } }
+        
+        window.deleteCurrentReadingChapter = async function() {
+            if(!window.isAdmin || !currentChapId || !confirm('Удалить эту главу?')) return;
+            try {
+                await deleteDoc(doc(dbRef, 'artifacts', appIdStr, 'public', 'data', 'chapters', currentChapId));
+                showToast('Глава удалена', 'fa-trash');
+                window.closeReader();
+            } catch (e) { showToast('Ошибка удаления', 'fa-circle-xmark'); }
+        }
 
         function loadFavorites() { try { favoriteIds = JSON.parse(localStorage.getItem('MW_FAVS') || '[]'); } catch(e) { favoriteIds = []; } }
         function saveFavorites() { localStorage.setItem('MW_FAVS', JSON.stringify(favoriteIds)); }
@@ -692,5 +690,4 @@
     </script>
 </body>
 </html>
-
 
