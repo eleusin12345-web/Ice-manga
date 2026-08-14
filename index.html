@@ -600,7 +600,7 @@
             appId: "1:415476811249:web:4c1169537a0d2491833050"
         };
         const appIdStr = 'mangaweb-ee8fc'; 
-        const ADMIN_PIN = "1234";
+        const ADMIN_PIN = "739184"; // Новый ПИН-код
 
         let dbRef = null; let authRef = null; let user = null;
         let dbMangas = []; let dbChapters = []; let dbRatings = []; let dbComments = [];
@@ -651,7 +651,6 @@
                 const app = initializeApp(firebaseConfig);
                 authRef = getAuth(app); 
                 
-                // Включаем оффлайн-кеш и лимиты
                 dbRef = initializeFirestore(app, {
                     localCache: persistentLocalCache()
                 });
@@ -680,7 +679,6 @@
         function listenData() {
             if (!dbRef) return;
             
-            // Твои правильные пути к базе + Лимиты для экономии
             onSnapshot(query(collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'mangas'), limit(100)), (snap) => {
                 dbMangas = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => b.createdAt - a.createdAt); refreshUI();
             });
@@ -805,8 +803,6 @@
             });
         }
 
-        // ================= УПРАВЛЕНИЕ МАНГОЙ (АДМИН) =================
-        
         window.openAddMangaModal = function() { 
             emMode = 'add'; currentMangaId = null;
             document.getElementById('edit-manga-modal-title').textContent = "Новый тайтл"; document.getElementById('form-edit-manga').reset();
@@ -911,9 +907,6 @@
             btn.disabled = false; btn.innerHTML = 'Сохранить';
         }
 
-
-        // ================= ДЕТАЛЬНАЯ СТРАНИЦА =================
-
         window.openMangaDetails = function(id) { 
             currentMangaId = id; 
             hideAllViews(); document.getElementById('view-details').classList.remove('hidden'); document.body.classList.remove('no-scroll'); window.scrollTo({ top: 0, behavior: 'instant' }); 
@@ -953,7 +946,6 @@
         function renderDetails(id) {
             const manga = dbMangas.find(m => m.id === id); if(!manga) return;
 
-            // СИСТЕМА РЕАЛЬНЫХ ПРОСМОТРОВ
             if (!window.sessionViewed) window.sessionViewed = [];
             if (!window.sessionViewed.includes(id) && dbRef) {
                 window.sessionViewed.push(id);
@@ -981,7 +973,6 @@
                 btnFavBig.classList.remove('bg-primary-600', 'border-primary-500'); btnFavBig.classList.add('bg-zinc-800/80', 'border-zinc-700');
             }
 
-            // РЕЙТИНГ
             const mRatings = dbRatings.filter(r => r.mangaId === id);
             const avgScore = mRatings.length > 0 ? (mRatings.reduce((sum, r) => sum + r.score, 0) / mRatings.length).toFixed(1) : '0.0';
             document.getElementById('det-avg-score').textContent = avgScore;
@@ -997,7 +988,6 @@
                 starsContainer.appendChild(star);
             }
 
-            // ЖАНРЫ
             const badgesCont = document.getElementById('det-badges'); badgesCont.innerHTML = '';
             (manga.genres || []).forEach(g => { const b = document.createElement('span'); b.className = 'bg-primary-900/40 text-primary-400 border border-primary-500/30 px-3 py-1 rounded-lg text-xs font-bold cursor-pointer hover:bg-primary-600 hover:text-white smooth-transition'; b.textContent = g; b.onclick = () => window.filterBy('genre', g); badgesCont.appendChild(b); });
             (manga.tags || []).forEach(t => { const b = document.createElement('span'); b.className = 'bg-blue-900/40 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-lg text-xs font-bold cursor-pointer hover:bg-blue-600 hover:text-white smooth-transition'; b.textContent = '#' + t; b.onclick = () => window.filterBy('tag', t); badgesCont.appendChild(b); });
@@ -1006,7 +996,6 @@
             document.getElementById('det-desc').textContent = manga.desc || 'Описание отсутствует.';
             document.getElementById('det-desc').classList.add('desc-collapsed'); document.getElementById('btn-desc-toggle').textContent = 'Показать полностью...';
 
-            // ПЕРЕВОДЧИКИ
             const transSec = document.getElementById('translators-section'); const transList = document.getElementById('det-translators-list'); transList.innerHTML = '';
             if (manga.translators && manga.translators.length > 0) {
                 transSec.classList.remove('hidden');
@@ -1025,7 +1014,6 @@
                 });
             } else { transSec.classList.add('hidden'); }
 
-            // ДОП. ДАННЫЕ
             const table = document.getElementById('det-info-table'); table.innerHTML = ''; const ad = manga.additionalData || {};
             const adMap = [
                 { label: 'Перевод', val: ad.translationStatus }, { label: 'Страна', val: ad.country },
@@ -1038,7 +1026,6 @@
             });
             if(hasAd) document.getElementById('additional-data-section').classList.remove('hidden'); else document.getElementById('additional-data-section').classList.add('hidden');
 
-            // ГЛАВЫ И ТОМА
             const mChaps = dbChapters.filter(c => c.mangaId === id); document.getElementById('det-chapters-badge').textContent = mChaps.length;
             const cList = document.getElementById('det-chapters'); cList.innerHTML = ''; 
             
@@ -1124,7 +1111,6 @@
             } catch (e) { showToast('Ошибка сохранения', 'fa-circle-xmark'); }
         }
 
-        // ================= КОММЕНТАРИИ ДЛЯ ТАЙТЛА =================
         window.renderMangaComments = function() {
             if(!currentMangaId) return;
             const list = document.getElementById('manga-comments-list'); list.innerHTML = '';
@@ -1171,7 +1157,6 @@
             } catch (err) { showToast('Ошибка', 'fa-circle-xmark'); }
         }
 
-        // ================= КОММЕНТАРИИ ДЛЯ ГЛАВЫ И ЧИТАЛКА =================
         window.renderComments = function() {
             const list = document.getElementById('comments-list'); list.innerHTML = '';
             const chapComments = dbComments.filter(c => c.chapterId === currentChapId);
@@ -1233,7 +1218,6 @@
         window.closeReader = function() { document.getElementById('view-reader').classList.add('hidden'); document.body.classList.remove('no-scroll'); if(currentMangaId) { window.openMangaDetails(currentMangaId); } else { window.goHome(); } }
         window.toggleReaderUI = function() { isUiHidden = !isUiHidden; const top = document.getElementById('reader-topbar'); const bottom = document.getElementById('reader-bottombar'); if (isUiHidden) { top.classList.add('reader-ui-hidden'); bottom.classList.add('reader-ui-hidden-bottom'); } else { top.classList.remove('reader-ui-hidden'); bottom.classList.remove('reader-ui-hidden-bottom'); } }
 
-        // ================= ДОБАВЛЕНИЕ ГЛАВЫ (С ТОМАМИ) =================
         window.openAddChapterModal = function() { 
             document.getElementById('in-chap-title').value = ''; 
             document.getElementById('in-chap-volume').value = ''; 
@@ -1261,7 +1245,6 @@
             btn.disabled = false; btn.innerHTML = 'Загрузить в базу';
         }
 
-        // ================= УДАЛЕНИЕ И ПОДТВЕРЖДЕНИЕ =================
         window.customConfirm = function(message, callback) {
             const overlay = document.createElement('div'); overlay.className = 'fixed inset-0 bg-black/80 z-[200] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in';
             overlay.innerHTML = `<div class="bg-zinc-900 border border-zinc-800 p-6 rounded-[2rem] max-w-xs w-full text-center shadow-2xl animate-slide-up"><div class="w-16 h-16 bg-red-500/10 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner"><i class="fa-solid fa-triangle-exclamation"></i></div><p class="text-white font-bold text-lg mb-6">${message}</p><div class="flex flex-col gap-3"><button id="btn-confirm-yes" class="w-full py-3 rounded-xl font-bold bg-red-600 text-white hover:bg-red-500 active:scale-95 smooth-transition">Удалить</button><button id="btn-confirm-no" class="w-full py-3 rounded-xl font-bold bg-zinc-800 text-zinc-300 hover:bg-zinc-700 active:scale-95 smooth-transition">Отмена</button></div></div>`;
@@ -1271,12 +1254,10 @@
         window.deleteChap = function(id) { if(!window.isAdmin || !id) return; window.customConfirm('Удалить главу?', async () => { try { await deleteDoc(doc(dbRef, 'artifacts', appIdStr, 'public', 'data', 'chapters', id)); showToast('Глава удалена', 'fa-trash'); } catch (e) {} }); }
         window.deleteCurrentReadingChapter = function() { if(!window.isAdmin || !currentChapId) return; window.customConfirm('Удалить эту главу?', async () => { try { await deleteDoc(doc(dbRef, 'artifacts', appIdStr, 'public', 'data', 'chapters', currentChapId)); showToast('Глава удалена', 'fa-trash'); window.closeReader(); } catch (e) {} }); }
 
-        // ================= ИЗБРАННОЕ =================
         function loadFavorites() { try { favoriteIds = JSON.parse(localStorage.getItem('MW_FAVS') || '[]'); } catch(e) { favoriteIds = []; } }
         function saveFavorites() { localStorage.setItem('MW_FAVS', JSON.stringify(favoriteIds)); }
         window.toggleFavorite = function() { if (!currentMangaId) return; const idx = favoriteIds.indexOf(currentMangaId); if (idx === -1) { favoriteIds.push(currentMangaId); showToast('Добавлено в Избранное ⭐', 'fa-star'); } else { favoriteIds.splice(idx, 1); showToast('Удалено из Избранного', 'fa-regular fa-star'); } saveFavorites(); renderDetails(currentMangaId); }
         
-        // ================= АВТОРИЗАЦИЯ =================
         function checkAdminStatus() { const els = document.querySelectorAll('.admin-only'); els.forEach(el => window.isAdmin ? el.classList.remove('hidden') : el.classList.add('hidden')); const menu = document.getElementById('admin-menu'); const loginBtn = document.getElementById('btn-login-admin'); if (window.isAdmin) { if(menu) { menu.classList.remove('hidden'); menu.classList.add('flex'); } if(loginBtn) loginBtn.classList.add('hidden'); } else { if(menu) { menu.classList.add('hidden'); menu.classList.remove('flex'); } if(loginBtn) loginBtn.classList.remove('hidden'); } }
         window.loginAdmin = function(e) { e.preventDefault(); if (document.getElementById('in-admin-pass').value === ADMIN_PIN) { window.isAdmin = true; localStorage.setItem('MW_IS_ADMIN', 'true'); checkAdminStatus(); window.hideModal('modal-auth'); showToast('Режим Автора включен', 'fa-unlock-keyhole'); } else { showToast('Неверный ПИН-код', 'fa-triangle-exclamation'); } document.getElementById('in-admin-pass').value = ''; }
         window.logoutAdmin = function() { window.isAdmin = false; localStorage.setItem('MW_IS_ADMIN', 'false'); checkAdminStatus(); window.toggleDrawer(); showToast('Вы вышли из режима Автора', 'fa-lock'); }
@@ -1289,5 +1270,4 @@
     </script>
 </body>
 </html>
-
 
