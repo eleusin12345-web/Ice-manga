@@ -589,7 +589,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, initializeFirestore, persistentLocalCache, query, limit } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCz1zBOWTXWZHnUjzQq2-Tsh20df-O_qb4",
@@ -649,20 +649,27 @@
             renderGenresAndTagsPages();
             try {
                 const app = initializeApp(firebaseConfig);
-                authRef = getAuth(app); dbRef = getFirestore(app);
+                authRef = getAuth(app); 
+                
+                // Включаем оффлайн-кеш и лимиты
+                dbRef = initializeFirestore(app, {
+                    localCache: persistentLocalCache()
+                });
                 
                 try { 
                     await signInAnonymously(authRef); 
                 } catch (authError) { 
-                    setNetStatus('online', 'Подключено'); 
-                    listenData(); 
+                    console.log("Auth skipped");
                 }
 
                 onAuthStateChanged(authRef, (u) => { 
                     user = u; 
-                    if (user) { setNetStatus('online', 'Онлайн'); listenData(); } 
+                    setNetStatus('online', 'Онлайн'); 
+                    listenData(); 
                 });
-            } catch (err) { setNetStatus('error', 'Ошибка сети'); }
+            } catch (err) { 
+                setNetStatus('error', 'Ошибка сети'); 
+            }
         }
 
         function setNetStatus(type, text) {
@@ -672,16 +679,18 @@
 
         function listenData() {
             if (!dbRef) return;
-            onSnapshot(collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'mangas'), (snap) => {
+            
+            // Твои правильные пути к базе + Лимиты для экономии
+            onSnapshot(query(collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'mangas'), limit(100)), (snap) => {
                 dbMangas = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => b.createdAt - a.createdAt); refreshUI();
             });
-            onSnapshot(collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'chapters'), (snap) => {
+            onSnapshot(query(collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'chapters'), limit(300)), (snap) => {
                 dbChapters = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => b.createdAt - a.createdAt); refreshUI();
             });
-            onSnapshot(collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'ratings'), (snap) => {
+            onSnapshot(query(collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'ratings'), limit(500)), (snap) => {
                 dbRatings = snap.docs.map(d => ({ id: d.id, ...d.data() })); refreshUI();
             });
-            onSnapshot(collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'comments'), (snap) => {
+            onSnapshot(query(collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'comments'), limit(500)), (snap) => {
                 dbComments = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => b.createdAt - a.createdAt); 
                 if (!document.getElementById('view-reader').classList.contains('hidden') && currentChapId) window.renderComments();
                 if (!document.getElementById('view-details').classList.contains('hidden') && currentMangaId) window.renderMangaComments();
@@ -890,7 +899,7 @@
             try { 
                 if (emMode === 'add') {
                     data.createdAt = Date.now();
-                    data.views = 0; // Начинаем с нуля
+                    data.views = 0;
                     await addDoc(collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'mangas'), data);
                     showToast('Тайтл добавлен!', 'fa-check'); 
                 } else {
@@ -1036,10 +1045,9 @@
             if (mChaps.length === 0) {
                 cList.innerHTML = '<div class="text-zinc-500 text-sm font-bold py-8 text-center bg-zinc-950/30 rounded-2xl border-2 border-dashed border-zinc-800">Главы еще не вышли</div>';
             } else {
-                // Группируем по томам
                 const grouped = {};
                 mChaps.forEach(chap => {
-                    const volName = chap.volume || 'Главы'; // Если нет тома, пишем просто "Главы"
+                    const volName = chap.volume || 'Главы';
                     if (!grouped[volName]) grouped[volName] = [];
                     grouped[volName].push(chap);
                 });
@@ -1049,7 +1057,6 @@
                     const volId = 'vol-chaps-' + vIndex;
                     const iconId = 'vol-icon-' + vIndex;
                     
-                    // Заголовок тома (Аккордеон)
                     const vHeader = document.createElement('div');
                     vHeader.className = 'bg-zinc-900 border border-zinc-800 p-4 rounded-xl flex items-center justify-between cursor-pointer hover:bg-zinc-800 smooth-transition shadow-sm select-none';
                     vHeader.onclick = () => window.toggleVolume(volId, iconId);
@@ -1061,16 +1068,13 @@
                     `;
                     cList.appendChild(vHeader);
 
-                    // Контейнер с главами этого тома
                     const vContainer = document.createElement('div');
                     vContainer.id = volId;
                     vContainer.className = 'flex flex-col gap-2 mt-2 mb-4';
                     
-                    // Скрываем все тома, кроме первого
                     if (vIndex !== 0) {
                         vContainer.classList.add('hidden');
                     } else {
-                        // Для первого тома сразу поворачиваем иконку
                         setTimeout(() => document.getElementById(iconId).classList.add('rotate-180'), 10);
                     }
 
@@ -1177,7 +1181,7 @@
                 const isMine = user && c.userId === user.uid; const canDelete = isMine || window.isAdmin;
                 const d = new Date(c.createdAt); const dateStr = d.toLocaleDateString('ru-RU') + ' ' + d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
                 const el = document.createElement('div'); el.className = 'bg-zinc-900/40 p-4 rounded-2xl border border-zinc-800/50 relative group';
-                let delBtn = canDelete ? `<button onclick="window.deleteComment('${c.id}')" class="absolute top-3 right-3 text-zinc-500 hover:text-red-400 bg-zinc-950/50 hover:bg-red-500/10 w-8 h-8 rounded-lg flex items-center justify-center smooth-transition active:scale-90"><i class="fa-solid fa-trash text-xs"></i></button>` : '';
+                let delBtn = canDelete ? `<button onclick="window.deleteComment('${c.id}')" class="absolute top-3 right-3 text-zinc-500 hover:text-red-400 bg-zinc-950/50 hover:bg-red-500/10 w-8 h-8 rounded-lg flex items-center justify-center smooth-transition active:scale-90" title="Удалить"><i class="fa-solid fa-trash text-xs"></i></button>` : '';
                 const initial = c.authorName ? c.authorName.charAt(0).toUpperCase() : 'U';
 
                 el.innerHTML = `
@@ -1248,7 +1252,7 @@
                 await addDoc(collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'chapters'), { 
                     mangaId: currentMangaId, 
                     title: document.getElementById('in-chap-title').value.trim(), 
-                    volume: volumeStr, // СОХРАНЯЕМ ТОМ В БАЗУ
+                    volume: volumeStr,
                     images: urls, 
                     createdAt: Date.now() 
                 }); 
