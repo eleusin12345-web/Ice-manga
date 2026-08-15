@@ -2,7 +2,7 @@
 <html lang="ru" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MangaWeb - Читалка манги</title>
     <meta name="google-site-verification" content="SRcoNqo4qHGrLEg5KC0hz-nl5cL4vA4JX89zO2_zVSU" />
     <!-- Tailwind CSS -->
@@ -267,7 +267,7 @@
                 <!-- ВЕРХНИЙ БЛОК: ОБЛОЖКА И ИНФА -->
                 <div class="flex flex-col md:flex-row gap-6 sm:gap-10 relative z-10">
                     <div class="w-full md:w-72 shrink-0 relative group">
-                        <img id="det-cover" src="" class="w-full aspect-[2/3] object-cover rounded-2xl bg-zinc-950 shadow-2xl border border-zinc-800 smooth-transition group-hover:shadow-[0_20px_50px_-15px_rgba(124,58,237,0.5)]" alt="Cover" onerror="this.src='https://via.placeholder.com/300x450/18181b/ffffff?text=Нет+обложки'">
+                        <img id="det-cover" src="" loading="lazy" class="w-full aspect-[2/3] object-cover rounded-2xl bg-zinc-950 shadow-2xl border border-zinc-800 smooth-transition group-hover:shadow-[0_20px_50px_-15px_rgba(124,58,237,0.5)]" alt="Cover" onerror="this.src='https://via.placeholder.com/300x450/18181b/ffffff?text=Нет+обложки'">
                         <button type="button" onclick="window.toggleFavorite()" id="btn-fav" class="absolute bottom-4 right-4 w-12 h-12 bg-zinc-900/90 backdrop-blur-md border border-zinc-700 rounded-full flex items-center justify-center text-xl smooth-transition hover:scale-110 shadow-xl">
                             <i class="fa-regular fa-star text-zinc-300" id="fav-icon"></i>
                         </button>
@@ -443,16 +443,16 @@
         </div>
     </div>
 
-    <!-- МОДАЛЬНЫЕ ОКНА -->
+    <!-- МОДАЛЬНЫЕ ОКНА (UI сохранен, ПИН заменен на Пароль) -->
     <div id="modal-auth" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 opacity-0 invisible pointer-events-none smooth-transition">
         <div class="bg-zinc-900 border border-zinc-800 w-full max-w-sm rounded-[2rem] p-8 shadow-2xl transform scale-95 translate-y-10 smooth-transition text-center relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 to-purple-500"></div>
             <div class="w-16 h-16 bg-primary-600/10 text-primary-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner"><i class="fa-solid fa-crown"></i></div>
             <h3 class="text-2xl font-black text-white mb-2">Создатель</h3>
-            <p class="text-sm text-zinc-500 mb-8 font-semibold">Введите ПИН-код для доступа</p>
+            <p class="text-sm text-zinc-500 mb-8 font-semibold">Введите пароль для доступа</p>
             <form onsubmit="window.loginAdmin(event)" class="space-y-4">
                 <input type="password" id="in-admin-pass" required class="w-full bg-zinc-950 border border-zinc-800 rounded-2xl p-4 text-center text-white tracking-widest font-bold text-2xl outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 shadow-inner" placeholder="****">
-                <button type="submit" class="w-full bg-primary-600 hover:bg-primary-500 text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary-600/30 active:scale-95 smooth-transition">Войти</button>
+                <button type="submit" id="btn-auth-submit" class="w-full bg-primary-600 hover:bg-primary-500 text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary-600/30 active:scale-95 smooth-transition">Войти</button>
             </form>
             <button type="button" onclick="window.hideModal('modal-auth')" class="mt-6 text-sm font-bold text-zinc-500 hover:text-white smooth-transition">Отмена</button>
         </div>
@@ -570,7 +570,6 @@
                     <label class="block text-xs font-black text-zinc-400 uppercase tracking-widest mb-2">Название главы *</label>
                     <input type="text" id="in-chap-title" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-4 text-white outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500" placeholder="Например: Глава 1">
                 </div>
-                <!-- ДОБАВЛЕНО ПОЛЕ ДЛЯ ТОМА -->
                 <div>
                     <label class="block text-xs font-black text-zinc-400 uppercase tracking-widest mb-2">Том (необязательно)</label>
                     <input type="text" id="in-chap-volume" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-4 text-white outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500" placeholder="Например: Том 1">
@@ -588,8 +587,9 @@
     <!-- FIREBASE И ЛОГИКА -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, initializeFirestore, persistentLocalCache, query, limit } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        // PRO FIX: Добавлены модули для входа и выхода через Почту
+        import { getAuth, signInAnonymously, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, initializeFirestore, persistentLocalCache, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCz1zBOWTXWZHnUjzQq2-Tsh20df-O_qb4",
@@ -600,7 +600,11 @@
             appId: "1:415476811249:web:4c1169537a0d2491833050"
         };
         const appIdStr = 'mangaweb-ee8fc'; 
-        const ADMIN_PIN = "739184"; // Новый ПИН-код
+        
+        // ==========================================
+        // ⚠️ ВАЖНО: ВПИШИ СЮДА СВОЙ СОЗДАННЫЙ EMAIL
+        const ADMIN_EMAIL = "admin@eleusin12345.com"; 
+        // ==========================================
 
         let dbRef = null; let authRef = null; let user = null;
         let dbMangas = []; let dbChapters = []; let dbRatings = []; let dbComments = [];
@@ -612,7 +616,6 @@
         
         let emGenres = []; let emTags = []; let emMode = 'add';
         
-        // ВАШИ ЖАНРЫ
         const GENRES = [
             { id: 'shonen', name: 'Сёнэн', img: 'https://raw.githubusercontent.com/eleusin12345-web/67/refs/heads/main/img_1786597631473_8rs125_1000061704.jpg' },
             { id: 'shojo', name: 'Сёдзё', img: 'https://raw.githubusercontent.com/eleusin12345-web/67/refs/heads/main/img_1786598404947_09m94b_1000061705.webp' },
@@ -641,11 +644,17 @@
         ];
 
         let currentFilterType = null; let currentFilterValue = null;
-        window.isAdmin = localStorage.getItem('MW_IS_ADMIN') === 'true';
+        window.isAdmin = false; // По умолчанию админка выключена
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return str.toString().replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
 
         async function initApp() {
             loadFavorites();
-            checkAdminStatus();
             renderGenresAndTagsPages();
             try {
                 const app = initializeApp(firebaseConfig);
@@ -654,18 +663,29 @@
                 dbRef = initializeFirestore(app, {
                     localCache: persistentLocalCache()
                 });
-                
-                try { 
-                    await signInAnonymously(authRef); 
-                } catch (authError) { 
-                    console.log("Auth skipped");
-                }
 
+                // PRO FIX: Слушатель авторизации (управляет правами админа и анонима)
                 onAuthStateChanged(authRef, (u) => { 
                     user = u; 
-                    setNetStatus('online', 'Онлайн'); 
-                    listenData(); 
+                    if(user) {
+                        setNetStatus('online', 'Онлайн'); 
+                        window.isAdmin = (user.email === ADMIN_EMAIL); // Включаем админа, если почта совпала
+                        checkAdminStatus();
+                        listenData(); 
+                    } else {
+                        // Если вышли, заходим как Аноним (для обычных читателей)
+                        setNetStatus('error', 'Нет авторизации');
+                        window.isAdmin = false;
+                        checkAdminStatus();
+                        signInAnonymously(authRef).catch(() => {});
+                    }
                 });
+
+                // Первичный вход (если нет сессии)
+                if (!authRef.currentUser) {
+                    signInAnonymously(authRef).catch(() => {});
+                }
+
             } catch (err) { 
                 setNetStatus('error', 'Ошибка сети'); 
             }
@@ -677,22 +697,25 @@
         }
 
         function listenData() {
-            if (!dbRef) return;
+            if (!dbRef || !user) return;
             
-            onSnapshot(query(collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'mangas'), limit(100)), (snap) => {
+            onSnapshot(collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'mangas'), (snap) => {
                 dbMangas = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => b.createdAt - a.createdAt); refreshUI();
-            });
-            onSnapshot(query(collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'chapters'), limit(300)), (snap) => {
+            }, (err) => console.error("Manga fetch error", err));
+            
+            onSnapshot(collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'chapters'), (snap) => {
                 dbChapters = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => b.createdAt - a.createdAt); refreshUI();
-            });
-            onSnapshot(query(collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'ratings'), limit(500)), (snap) => {
+            }, (err) => console.error("Chapters fetch error", err));
+            
+            onSnapshot(collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'ratings'), (snap) => {
                 dbRatings = snap.docs.map(d => ({ id: d.id, ...d.data() })); refreshUI();
-            });
-            onSnapshot(query(collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'comments'), limit(500)), (snap) => {
+            }, (err) => console.error("Ratings fetch error", err));
+            
+            onSnapshot(collection(dbRef, 'artifacts', appIdStr, 'public', 'data', 'comments'), (snap) => {
                 dbComments = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => b.createdAt - a.createdAt); 
                 if (!document.getElementById('view-reader').classList.contains('hidden') && currentChapId) window.renderComments();
                 if (!document.getElementById('view-details').classList.contains('hidden') && currentMangaId) window.renderMangaComments();
-            });
+            }, (err) => console.error("Comments fetch error", err));
         }
 
         function hideAllViews() { document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden')); }
@@ -709,7 +732,7 @@
                     const card = document.createElement('div');
                     card.className = 'card-hover relative h-28 sm:h-32 rounded-2xl overflow-hidden cursor-pointer group shadow-lg';
                     card.onclick = () => window.filterBy('genre', g.name);
-                    card.innerHTML = `<img src="${g.img}" class="absolute inset-0 w-full h-full object-cover smooth-transition group-hover:scale-110"><div class="absolute inset-0 bg-black/50 group-hover:bg-black/30 smooth-transition"></div><div class="absolute inset-0 flex items-center justify-center p-2 text-center"><span class="font-black text-white text-lg sm:text-xl drop-shadow-lg tracking-wide">${g.name}</span></div>`;
+                    card.innerHTML = `<img src="${escapeHTML(g.img)}" loading="lazy" class="absolute inset-0 w-full h-full object-cover smooth-transition group-hover:scale-110"><div class="absolute inset-0 bg-black/50 group-hover:bg-black/30 smooth-transition"></div><div class="absolute inset-0 flex items-center justify-center p-2 text-center"><span class="font-black text-white text-lg sm:text-xl drop-shadow-lg tracking-wide">${escapeHTML(g.name)}</span></div>`;
                     gGrid.appendChild(card);
                 });
             }
@@ -727,8 +750,8 @@
             currentFilterType = type; currentFilterValue = value;
             hideAllViews(); document.getElementById('view-filtered').classList.remove('hidden'); document.body.classList.remove('no-scroll'); window.scrollTo({ top: 0, behavior: 'instant' });
             const titleEl = document.getElementById('filtered-title');
-            if(type === 'genre') titleEl.innerHTML = `<i class="fa-solid fa-masks-theater text-primary-500 mr-2"></i> Жанр: ${value}`;
-            else titleEl.innerHTML = `<i class="fa-solid fa-tags text-blue-500 mr-2"></i> Тег: ${value}`;
+            if(type === 'genre') titleEl.innerHTML = `<i class="fa-solid fa-masks-theater text-primary-500 mr-2"></i> Жанр: ${escapeHTML(value)}`;
+            else titleEl.innerHTML = `<i class="fa-solid fa-tags text-blue-500 mr-2"></i> Тег: ${escapeHTML(value)}`;
             renderFilteredData();
         }
 
@@ -770,7 +793,7 @@
                     recentChaps.forEach(chap => {
                         const manga = dbMangas.find(m => m.id === chap.mangaId); if (!manga) return;
                         const el = document.createElement('div'); el.className = 'flex items-center gap-4 bg-zinc-900/60 hover:bg-zinc-800 p-3 rounded-2xl border border-zinc-800/80 cursor-pointer card-hover smooth-transition'; el.onclick = () => window.openMangaDetails(manga.id);
-                        el.innerHTML = `<img src="${manga.cover}" class="w-16 h-16 rounded-xl object-cover bg-zinc-950 shadow-md border border-zinc-800"><div class="flex-1 min-w-0"><h4 class="font-black text-white text-sm truncate leading-tight">${manga.title}</h4><p class="text-primary-400 font-bold text-xs truncate mt-1 bg-primary-900/30 px-2 py-0.5 rounded-md inline-block">${chap.title}</p></div>`;
+                        el.innerHTML = `<img src="${escapeHTML(manga.cover)}" loading="lazy" class="w-16 h-16 rounded-xl object-cover bg-zinc-950 shadow-md border border-zinc-800"><div class="flex-1 min-w-0"><h4 class="font-black text-white text-sm truncate leading-tight">${escapeHTML(manga.title)}</h4><p class="text-primary-400 font-bold text-xs truncate mt-1 bg-primary-900/30 px-2 py-0.5 rounded-md inline-block">${escapeHTML(chap.title)}</p></div>`;
                         latest.appendChild(el);
                     });
                 }
@@ -787,17 +810,17 @@
                 const card = document.createElement('div'); card.className = 'card-hover bg-zinc-900 border border-zinc-800/80 rounded-2xl overflow-hidden cursor-pointer relative shadow-lg group flex flex-col'; card.onclick = () => window.openMangaDetails(manga.id);
                 card.innerHTML = `
                     <div class="pt-[140%] relative bg-zinc-950 w-full overflow-hidden">
-                        <img src="${manga.cover}" class="absolute inset-0 w-full h-full object-cover smooth-transition group-hover:scale-110 group-hover:opacity-80" onerror="this.src='https://via.placeholder.com/300x450/18181b/ffffff?text=Нет+обложки'">
+                        <img src="${escapeHTML(manga.cover)}" loading="lazy" class="absolute inset-0 w-full h-full object-cover smooth-transition group-hover:scale-110 group-hover:opacity-80" onerror="this.src='https://via.placeholder.com/300x450/18181b/ffffff?text=Нет+обложки'">
                         <div class="absolute top-2 left-2 bg-black/80 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1 border border-zinc-700/50 z-20">
                             <i class="fa-solid fa-star text-yellow-500 text-[10px]"></i>
                             <span class="text-white text-xs font-black drop-shadow-md">${avgScore}</span>
                         </div>
-                        ${manga.type ? `<div class="absolute bottom-2 right-2 bg-primary-600/90 backdrop-blur-md text-white px-2 py-0.5 rounded-md text-[10px] font-black z-20 shadow-lg border border-primary-500/50">${manga.type}</div>` : ''}
+                        ${manga.type ? `<div class="absolute bottom-2 right-2 bg-primary-600/90 backdrop-blur-md text-white px-2 py-0.5 rounded-md text-[10px] font-black z-20 shadow-lg border border-primary-500/50">${escapeHTML(manga.type)}</div>` : ''}
                         <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent opacity-80 group-hover:opacity-100 smooth-transition"></div>
                     </div>
                     <div class="p-4 absolute bottom-0 left-0 right-0 z-10 transform smooth-transition group-hover:-translate-y-1">
-                        <h3 class="font-black text-white text-sm sm:text-base truncate leading-tight drop-shadow-md">${manga.title}</h3>
-                        <p class="text-[11px] sm:text-xs font-black text-primary-400 mt-1 truncate drop-shadow-md"><i class="fa-solid fa-layer-group mr-1"></i>${lastChap}</p>
+                        <h3 class="font-black text-white text-sm sm:text-base truncate leading-tight drop-shadow-md">${escapeHTML(manga.title)}</h3>
+                        <p class="text-[11px] sm:text-xs font-black text-primary-400 mt-1 truncate drop-shadow-md"><i class="fa-solid fa-layer-group mr-1"></i>${escapeHTML(lastChap)}</p>
                     </div>`;
                 container.appendChild(card);
             });
@@ -863,7 +886,7 @@
         }
 
         window.submitMangaData = async function(e) {
-            e.preventDefault(); if (!window.isAdmin || !dbRef) return;
+            e.preventDefault(); if (!window.isAdmin || !dbRef || !user) return;
             const btn = document.getElementById('btn-submit-manga'); btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Сохранение...';
             
             const rawTranslators = document.getElementById('in-em-translators').value.split('\n').map(s=>s.trim()).filter(s=>s.length>0);
@@ -946,12 +969,16 @@
         function renderDetails(id) {
             const manga = dbMangas.find(m => m.id === id); if(!manga) return;
 
-            if (!window.sessionViewed) window.sessionViewed = [];
-            if (!window.sessionViewed.includes(id) && dbRef) {
-                window.sessionViewed.push(id);
-                const currentViews = manga.views || 0;
-                updateDoc(doc(dbRef, 'artifacts', appIdStr, 'public', 'data', 'mangas', id), { views: currentViews + 1 }).catch(()=>{});
-                document.getElementById('manga-views').textContent = currentViews + 1;
+            let sessionViewed = [];
+            try { sessionViewed = JSON.parse(sessionStorage.getItem('MW_VIEWED') || '[]'); } catch(e){}
+            
+            if (!sessionViewed.includes(id) && dbRef && user) {
+                sessionViewed.push(id);
+                sessionStorage.setItem('MW_VIEWED', JSON.stringify(sessionViewed));
+                updateDoc(doc(dbRef, 'artifacts', appIdStr, 'public', 'data', 'mangas', id), { 
+                    views: increment(1) 
+                }).catch(()=>{});
+                document.getElementById('manga-views').textContent = (manga.views || 0) + 1;
             } else {
                 document.getElementById('manga-views').textContent = manga.views || 0;
             }
@@ -1000,13 +1027,13 @@
             if (manga.translators && manga.translators.length > 0) {
                 transSec.classList.remove('hidden');
                 manga.translators.forEach(tr => {
-                    const avatar = tr.avatar ? `<img src="${tr.avatar}" class="w-10 h-10 rounded-full object-cover shadow">` : `<div class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="fa-solid fa-language"></i></div>`;
+                    const avatar = tr.avatar ? `<img src="${escapeHTML(tr.avatar)}" loading="lazy" class="w-10 h-10 rounded-full object-cover shadow">` : `<div class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="fa-solid fa-language"></i></div>`;
                     transList.innerHTML += `
                         <div class="flex items-center gap-4 bg-zinc-900/50 p-3 rounded-xl border border-zinc-800/80">
                             ${avatar}
                             <div class="flex-1">
-                                <div class="text-zinc-200 font-bold text-sm">${tr.name}</div>
-                                <div class="text-zinc-500 font-bold text-xs">${tr.followers}</div>
+                                <div class="text-zinc-200 font-bold text-sm">${escapeHTML(tr.name)}</div>
+                                <div class="text-zinc-500 font-bold text-xs">${escapeHTML(tr.followers)}</div>
                             </div>
                             <button class="bg-zinc-800 text-zinc-400 hover:text-white hover:bg-primary-600 w-8 h-8 rounded-lg flex items-center justify-center smooth-transition shadow"><i class="fa-solid fa-user-plus text-xs"></i></button>
                         </div>
@@ -1022,7 +1049,7 @@
             ];
             let hasAd = false;
             adMap.forEach(item => {
-                if(item.val) { hasAd = true; table.innerHTML += `<tr class="hover:bg-zinc-800/30 smooth-transition"><td class="py-3 px-4 text-zinc-500 font-bold w-1/2">${item.label}</td><td class="py-3 px-4 text-zinc-300 font-semibold">${item.val}</td></tr>`; }
+                if(item.val) { hasAd = true; table.innerHTML += `<tr class="hover:bg-zinc-800/30 smooth-transition"><td class="py-3 px-4 text-zinc-500 font-bold w-1/2">${escapeHTML(item.label)}</td><td class="py-3 px-4 text-zinc-300 font-semibold">${escapeHTML(item.val)}</td></tr>`; }
             });
             if(hasAd) document.getElementById('additional-data-section').classList.remove('hidden'); else document.getElementById('additional-data-section').classList.add('hidden');
 
@@ -1049,7 +1076,7 @@
                     vHeader.onclick = () => window.toggleVolume(volId, iconId);
                     vHeader.innerHTML = `
                         <div class="font-black text-white text-lg drop-shadow-md">
-                            ${vol} <span class="text-zinc-500 text-sm ml-2 font-bold">(${grouped[vol].length})</span>
+                            ${escapeHTML(vol)} <span class="text-zinc-500 text-sm ml-2 font-bold">(${grouped[vol].length})</span>
                         </div>
                         <i id="${iconId}" class="fa-solid fa-chevron-down text-zinc-400 smooth-transition"></i>
                     `;
@@ -1072,7 +1099,7 @@
                         const d = new Date(chap.createdAt); const dateStr = `${d.getDate()}.${d.getMonth()+1}.${d.getFullYear()}`;
                         row.innerHTML = `
                             <div class="flex flex-col flex-1 truncate pr-2">
-                                <span class="font-black text-sm text-zinc-200 truncate group-hover:text-primary-400 smooth-transition group-hover:translate-x-1">${chap.title}</span>
+                                <span class="font-black text-sm text-zinc-200 truncate group-hover:text-primary-400 smooth-transition group-hover:translate-x-1">${escapeHTML(chap.title)}</span>
                                 <span class="text-[10px] font-bold text-zinc-500 mt-1 uppercase tracking-wider">${dateStr}</span>
                             </div>
                             <div class="flex items-center gap-2 pl-2">
@@ -1131,15 +1158,15 @@
                 el.innerHTML = `
                     ${delBtn}
                     <div class="flex items-center gap-3 mb-2 pr-10">
-                        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shadow-md">${initial}</div>
+                        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shadow-md">${escapeHTML(initial)}</div>
                         <div>
                             <div class="text-zinc-200 font-bold text-sm leading-none flex items-center gap-2">
-                                ${c.authorName || 'Аноним'} ${c.isAdmin ? '<i class="fa-solid fa-crown text-primary-500 text-[10px]" title="Автор"></i>' : ''}
+                                ${escapeHTML(c.authorName || 'Аноним')} ${c.isAdmin ? '<i class="fa-solid fa-crown text-primary-500 text-[10px]" title="Автор"></i>' : ''}
                             </div>
                             <div class="text-zinc-500 text-[10px] mt-1 font-bold">${dateStr}</div>
                         </div>
                     </div>
-                    <p class="text-zinc-300 text-sm whitespace-pre-wrap break-words mt-2 leading-relaxed">${c.text}</p>
+                    <p class="text-zinc-300 text-sm whitespace-pre-wrap break-words mt-2 leading-relaxed">${escapeHTML(c.text)}</p>
                 `;
                 list.appendChild(el);
             });
@@ -1172,15 +1199,15 @@
                 el.innerHTML = `
                     ${delBtn}
                     <div class="flex items-center gap-3 mb-2 pr-10">
-                        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shadow-md">${initial}</div>
+                        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shadow-md">${escapeHTML(initial)}</div>
                         <div>
                             <div class="text-zinc-200 font-bold text-sm leading-none flex items-center gap-2">
-                                ${c.authorName || 'Аноним'} ${c.isAdmin ? '<i class="fa-solid fa-crown text-primary-500 text-[10px]" title="Автор"></i>' : ''}
+                                ${escapeHTML(c.authorName || 'Аноним')} ${c.isAdmin ? '<i class="fa-solid fa-crown text-primary-500 text-[10px]" title="Автор"></i>' : ''}
                             </div>
                             <div class="text-zinc-500 text-[10px] mt-1 font-bold">${dateStr}</div>
                         </div>
                     </div>
-                    <p class="text-zinc-300 text-sm whitespace-pre-wrap break-words mt-2 leading-relaxed">${c.text}</p>
+                    <p class="text-zinc-300 text-sm whitespace-pre-wrap break-words mt-2 leading-relaxed">${escapeHTML(c.text)}</p>
                 `;
                 list.appendChild(el);
             });
@@ -1206,7 +1233,15 @@
             document.getElementById('btn-next-chap').disabled = (idx === 0); document.getElementById('btn-prev-chap').disabled = (idx === mChaps.length - 1);
             
             const pagesContainer = document.getElementById('reader-pages'); pagesContainer.innerHTML = '';
-            chap.images.forEach((url) => { if(!url.trim()) return; const img = document.createElement('img'); img.src = url.trim(); img.className = 'w-full h-auto block m-0 p-0 pointer-events-none bg-[#09090b] min-h-[100px] object-cover'; img.onerror = () => { img.style.display = 'none'; }; pagesContainer.appendChild(img); });
+            chap.images.forEach((url) => { 
+                if(!url.trim()) return; 
+                const img = document.createElement('img'); 
+                img.src = url.trim(); 
+                img.loading = 'lazy'; 
+                img.className = 'w-full h-auto block m-0 p-0 pointer-events-none bg-[#09090b] min-h-[100px] object-cover'; 
+                img.onerror = () => { img.style.display = 'none'; }; 
+                pagesContainer.appendChild(img); 
+            });
             if(chap.images.length === 0) pagesContainer.innerHTML = '<div class="text-zinc-500 p-10 font-bold text-center">В главе нет страниц</div>';
             
             document.getElementById('in-comment-name').value = localStorage.getItem('MW_USERNAME') || ''; window.renderComments();
@@ -1226,7 +1261,7 @@
         }
         
         window.submitChapter = async function(e) {
-            e.preventDefault(); if (!window.isAdmin || !dbRef || !currentMangaId) return;
+            e.preventDefault(); if (!window.isAdmin || !dbRef || !user || !currentMangaId) return;
             const btn = document.getElementById('btn-submit-chapter'); btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Загрузка...';
             
             const urls = document.getElementById('in-chap-urls').value.split('\n').map(u=>u.trim()).filter(u=>u.length>0);
@@ -1247,7 +1282,7 @@
 
         window.customConfirm = function(message, callback) {
             const overlay = document.createElement('div'); overlay.className = 'fixed inset-0 bg-black/80 z-[200] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in';
-            overlay.innerHTML = `<div class="bg-zinc-900 border border-zinc-800 p-6 rounded-[2rem] max-w-xs w-full text-center shadow-2xl animate-slide-up"><div class="w-16 h-16 bg-red-500/10 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner"><i class="fa-solid fa-triangle-exclamation"></i></div><p class="text-white font-bold text-lg mb-6">${message}</p><div class="flex flex-col gap-3"><button id="btn-confirm-yes" class="w-full py-3 rounded-xl font-bold bg-red-600 text-white hover:bg-red-500 active:scale-95 smooth-transition">Удалить</button><button id="btn-confirm-no" class="w-full py-3 rounded-xl font-bold bg-zinc-800 text-zinc-300 hover:bg-zinc-700 active:scale-95 smooth-transition">Отмена</button></div></div>`;
+            overlay.innerHTML = `<div class="bg-zinc-900 border border-zinc-800 p-6 rounded-[2rem] max-w-xs w-full text-center shadow-2xl animate-slide-up"><div class="w-16 h-16 bg-red-500/10 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner"><i class="fa-solid fa-triangle-exclamation"></i></div><p class="text-white font-bold text-lg mb-6">${escapeHTML(message)}</p><div class="flex flex-col gap-3"><button id="btn-confirm-yes" class="w-full py-3 rounded-xl font-bold bg-red-600 text-white hover:bg-red-500 active:scale-95 smooth-transition">Удалить</button><button id="btn-confirm-no" class="w-full py-3 rounded-xl font-bold bg-zinc-800 text-zinc-300 hover:bg-zinc-700 active:scale-95 smooth-transition">Отмена</button></div></div>`;
             document.body.appendChild(overlay); document.getElementById('btn-confirm-no').onclick = () => overlay.remove(); document.getElementById('btn-confirm-yes').onclick = () => { overlay.remove(); callback(); };
         }
         window.deleteCurrentManga = function() { if(!window.isAdmin || !currentMangaId) return; window.customConfirm('Удалить этот тайтл навсегда?', async () => { try { await deleteDoc(doc(dbRef, 'artifacts', appIdStr, 'public', 'data', 'mangas', currentMangaId)); showToast('Тайтл удален', 'fa-trash'); window.goHome(); } catch (e) {} }); }
@@ -1259,8 +1294,39 @@
         window.toggleFavorite = function() { if (!currentMangaId) return; const idx = favoriteIds.indexOf(currentMangaId); if (idx === -1) { favoriteIds.push(currentMangaId); showToast('Добавлено в Избранное ⭐', 'fa-star'); } else { favoriteIds.splice(idx, 1); showToast('Удалено из Избранного', 'fa-regular fa-star'); } saveFavorites(); renderDetails(currentMangaId); }
         
         function checkAdminStatus() { const els = document.querySelectorAll('.admin-only'); els.forEach(el => window.isAdmin ? el.classList.remove('hidden') : el.classList.add('hidden')); const menu = document.getElementById('admin-menu'); const loginBtn = document.getElementById('btn-login-admin'); if (window.isAdmin) { if(menu) { menu.classList.remove('hidden'); menu.classList.add('flex'); } if(loginBtn) loginBtn.classList.add('hidden'); } else { if(menu) { menu.classList.add('hidden'); menu.classList.remove('flex'); } if(loginBtn) loginBtn.classList.remove('hidden'); } }
-        window.loginAdmin = function(e) { e.preventDefault(); if (document.getElementById('in-admin-pass').value === ADMIN_PIN) { window.isAdmin = true; localStorage.setItem('MW_IS_ADMIN', 'true'); checkAdminStatus(); window.hideModal('modal-auth'); showToast('Режим Автора включен', 'fa-unlock-keyhole'); } else { showToast('Неверный ПИН-код', 'fa-triangle-exclamation'); } document.getElementById('in-admin-pass').value = ''; }
-        window.logoutAdmin = function() { window.isAdmin = false; localStorage.setItem('MW_IS_ADMIN', 'false'); checkAdminStatus(); window.toggleDrawer(); showToast('Вы вышли из режима Автора', 'fa-lock'); }
+        
+        // PRO FIX: Теперь логин работает через надежный Firebase (Email + Пароль)
+        window.loginAdmin = async function(e) { 
+            e.preventDefault(); 
+            const btn = document.getElementById('btn-auth-submit');
+            const passInput = document.getElementById('in-admin-pass');
+            const password = passInput.value;
+            
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            btn.disabled = true;
+
+            try {
+                // Пытаемся войти в систему с помощью созданного тобою Email и введенного пароля
+                await signInWithEmailAndPassword(authRef, ADMIN_EMAIL, password);
+                window.hideModal('modal-auth'); 
+                showToast('Режим Автора включен', 'fa-unlock-keyhole'); 
+            } catch (error) {
+                showToast('Неверный пароль', 'fa-triangle-exclamation'); 
+            }
+            
+            passInput.value = ''; 
+            btn.innerHTML = 'Войти';
+            btn.disabled = false;
+        }
+
+        // PRO FIX: При выходе мы вылогиниваемся из админа, и сайт автоматически делает нас Анонимом для чтения
+        window.logoutAdmin = async function() { 
+            try {
+                await signOut(authRef);
+                window.toggleDrawer(); 
+                showToast('Вы вышли из режима Автора', 'fa-lock');
+            } catch (err) {}
+        }
 
         window.showModal = function(id) { const el = document.getElementById(id); el.classList.remove('invisible'); document.body.classList.add('no-scroll'); setTimeout(() => el.classList.add('modal-enter'), 10); }
         window.hideModal = function(id) { const el = document.getElementById(id); el.classList.remove('modal-enter'); document.body.classList.remove('no-scroll'); setTimeout(() => el.classList.add('invisible'), 300); }
@@ -1270,4 +1336,5 @@
     </script>
 </body>
 </html>
+
 
